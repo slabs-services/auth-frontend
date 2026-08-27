@@ -4,6 +4,7 @@ import SignUp from "./Pages/SignUp";
 import MFARegister from "./Pages/MFARegister";
 import SignInTrouble from "./Pages/SignInTroubles";
 import VerifyEmail from "./Pages/VerifyEmail";
+import Finish from "./Pages/Finish";
 
 export default function Router(){
     return (
@@ -13,6 +14,7 @@ export default function Router(){
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/add-mfa" element={<MFARegister />} />
                 <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route path="/finish-activation" element={<Finish />} />
                 <Route path="/signin-trouble" element={<SignInTrouble />} />
             </Routes>
         </BrowserRouter>
