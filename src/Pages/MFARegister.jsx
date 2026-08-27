@@ -7,8 +7,11 @@ import { MdWarning } from "react-icons/md";
 import { FaCopy } from "react-icons/fa";
 import { IoReload } from "react-icons/io5";
 import { ConfirmModal } from "../Modals/Confirm";
+import { useNavigate } from "react-router-dom";
 
 export default function MFARegister(){
+    const navigate = useNavigate();
+
     const [validations, setValidations] = useState([
         {
             field: "otp",
@@ -93,11 +96,7 @@ export default function MFARegister(){
                 }
 
                 setOtp('');
-                setIsLoading(false);
-                updateAlert("severity", 1);
-                updateAlert("showAlert", true);
-                updateAlert("message", data.message);
-                updateAlert("hideContent", true);
+                navigate('/finish-activation');
             }catch(e){
                 setOtp('');
                 updateValidation("generic", "Unknown Error");

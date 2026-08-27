@@ -105,8 +105,9 @@ export default function Finish(){
                 <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-4 flex flex-col items-center">
                     <h1 className="text-slate-900 text-3xl font-bold">Activation</h1>
                     { !alert.hideContent ? <>
-                        <p className="mt-6 text-sm">Congratulations, <strong>{name}</strong>! 🎉 Your account has been successfully activated, and multi-factor authentication (MFA) is now enabled. Your SpaceLabs Cloud account is fully set up and ready to use. Thank you for choosing SpaceLabs — welcome aboard!</p>
-                        <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer w-full mt-4">Go to my account</button>
+                        <img src="/success.svg" title="Success" alt="Success" className="w-46 mt-6" />
+                        <p className="mt-6">Congratulations, <strong>{name}</strong>! 🎉 Your account has been successfully activated, and multi-factor authentication (MFA) is now enabled. Your SpaceLabs Cloud account is fully set up and ready to use. Thank you for choosing SpaceLabs — welcome aboard!</p>
+                        <Link to="/" className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer w-full mt-4 text-center">Go to my account</Link>
                     </> : <p className="mt-4 text-sm">Have an account? <Link to="/oauth" className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p> }
                 </div>
             </div>
