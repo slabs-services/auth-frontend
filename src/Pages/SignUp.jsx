@@ -123,6 +123,7 @@ export default function SignUp(){
                 updateAlert("severity", 1); 
                 updateAlert("showAlert", true);
                 updateAlert("message", data.message);
+                updateAlert("hideContent", true);
                 setIsLoading(false);
             }catch(e){
                 updateAlert("severity", 3);
@@ -132,6 +133,8 @@ export default function SignUp(){
                 return;
             }
         }catch(e){
+            setPassword('');
+            setRepassword('');
             updateAlert("severity", 3);
             updateAlert("showAlert", true);
             updateAlert("message", "Authentication service is temporarily unavailable.");
