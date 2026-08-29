@@ -65,7 +65,14 @@ export default function ForgotPassword(){
                 const data = await response.json();
 
                 if (!response.ok) {
-                    updateValidation(data.field, data.message);
+                    if(data.field === "alert"){
+                        updateAlert("severity", data.severity);
+                        updateAlert("showAlert", true);
+                        updateAlert("message", data.message);
+                        updateAlert("hideContent", data.hideContent);
+                    }else{
+                        updateValidation(data.field, data.message);
+                    }
                     setIsLoading(false);
                     return;
                 }

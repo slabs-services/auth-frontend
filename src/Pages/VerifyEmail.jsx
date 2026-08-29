@@ -72,6 +72,7 @@ export default function VerifyEmail(){
                     updateAlert("severity", data.severity);
                     updateAlert("showAlert", true);
                     updateAlert("message", data.message);
+                    updateAlert("hideContent", data.hideContent);
                     setIsLoading(false);
                     return;
                 }

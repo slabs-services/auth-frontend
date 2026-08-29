@@ -110,9 +110,10 @@ export default function SignUp(){
 
                 if (!response.ok) {
                     if(data.field === "alert"){
-                        updateAlert("severity", 3);
+                        updateAlert("severity", data.severity);
                         updateAlert("showAlert", true);
                         updateAlert("message", data.message);
+                        updateAlert("hideContent", data.hideContent);
                     }else{
                         updateValidation(data.field, data.message);
                     }

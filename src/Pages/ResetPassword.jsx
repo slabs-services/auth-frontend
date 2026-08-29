@@ -93,9 +93,10 @@ export default function ResetPassword(){
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", 3);
+                    updateAlert("severity", data.severity);
                     updateAlert("showAlert", true);
                     updateAlert("message", data.message);
+                    updateAlert("hideContent", data.hideContent);
                     setIsLoading(false);
                     return;
                 }
@@ -165,10 +166,10 @@ export default function ResetPassword(){
 
                 if (!response.ok) {
                     if(data.field === "alert"){
-                        updateAlert("severity", 3);
+                        updateAlert("severity", data.severity);
                         updateAlert("showAlert", true);
-                        updateAlert("hideContent", true);
                         updateAlert("message", data.message);
+                        updateAlert("hideContent", data.hideContent);
                     }else{
                         updateValidation(data.field, data.message);
                     }

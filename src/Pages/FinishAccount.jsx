@@ -55,9 +55,10 @@ export default function FinishAccount(){
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", 3);
+                    updateAlert("severity", data.severity);
                     updateAlert("showAlert", true);
                     updateAlert("message", data.message);
+                    updateAlert("hideContent", data.hideContent);
                     setIsLoading(false);
                     return;
                 }
