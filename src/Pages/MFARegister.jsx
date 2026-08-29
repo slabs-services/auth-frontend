@@ -179,10 +179,10 @@ export default function MFARegister(){
     }
 
     useEffect(() => {
-        async function mfaValidation() {
+        async function mfaSettings() {
             try {
                 const verifyMFA = new URL(
-                    "/mfaValidation",
+                    "/mfaSettings",
                     import.meta.env.VITE_AUTH_API_URL
                 );
 
@@ -230,7 +230,7 @@ export default function MFARegister(){
             }
         }
 
-        mfaValidation();
+        mfaSettings();
     }, []);
 
     return (

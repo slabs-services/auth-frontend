@@ -4,7 +4,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { MdWarning } from "react-icons/md";
 import { Link } from "react-router-dom";
 
-export default function Finish(){
+export default function FinishAccount(){
     const [alert, setAlert] = useState({
         showAlert: false,
         severity: 0,

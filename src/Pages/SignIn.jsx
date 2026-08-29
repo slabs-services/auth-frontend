@@ -153,7 +153,8 @@ export default function Auth(){
                         </div>
                     }
                 </> : null }
-                { !alert.hideContent ? <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
+                { !alert.hideContent ?
+                <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-y-1">
                         <label htmlFor="email">Email address</label>
                         <input required type="email" id="email" placeholder="example@domain.com" autoComplete="email" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={email} onChange={(e) => { setEmail(e.target.value); }} />
@@ -164,10 +165,10 @@ export default function Auth(){
                         <input required type="password" id="password" autoComplete="current-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={password} onChange={(e) => { setPassword(e.target.value); }} />
                         { validations.find((validation) => {return validation.field === "password"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "password"}).message}</p> : null }
                     </div>
-                    <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800">Having trouble signing in?</Link>
                     <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Sign In</button>
                 </form> : null }
-                <p className="mt-4 text-sm">Don't have an account? <Link to="/signup" className="hover:text-blue-800 text-blue-700 font-bold">Sign up</Link></p>
+                <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>
+                <p className="mt-2 text-sm">Don't have an account? <Link to="/signup" className="hover:text-blue-800 text-blue-700 font-bold">Sign up</Link></p>
             </div>
         </div>
     );
