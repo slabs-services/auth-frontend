@@ -202,6 +202,7 @@ export default function ResetPassword(){
 
     function clearFeedbackErrors(field) {
         updateValidation(field, "");
+        updateAlert("showAlert", false);
     }
 
     return (

@@ -197,6 +197,7 @@ export default function Auth(){
 
     function clearFeedbackErrors(field) {
         updateValidation(field, "");
+        updateAlert("showAlert", false);
     }
 
     useEffect(() => {

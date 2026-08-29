@@ -145,6 +145,7 @@ export default function SignUp(){
     }
 
     function clearFeedbackErrors(field) {
+        updateAlert("showAlert", false);
         updateValidation(field, "");
     }
 

@@ -100,6 +100,7 @@ export default function ForgotPassword(){
 
     function clearFeedbackErrors(field) {
         updateValidation(field, "");
+        updateAlert("showAlert", false);
     }
 
     return (
