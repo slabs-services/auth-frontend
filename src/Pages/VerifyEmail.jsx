@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { MdError } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdWarning } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 
 export default function VerifyEmail(){
+    const location = useLocation();
+    
     const [name, setName] = useState('');
     const [isLoading, setIsLoading] = useState(true);
         const [alert, setAlert] = useState({

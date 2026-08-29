@@ -7,10 +7,11 @@ import { MdWarning } from "react-icons/md";
 import { FaCopy } from "react-icons/fa";
 import { IoReload } from "react-icons/io5";
 import { ConfirmModal } from "../Modals/Confirm";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function MFARegister(){
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [validations, setValidations] = useState([
         {
@@ -135,7 +136,7 @@ export default function MFARegister(){
             });
 
             if (response.status === 502) {
-                updateAlert("severity", "3");
+                updateAlert("severity", 3);
                 updateAlert("showAlert", true);
                 updateAlert("message", "Authentication service is temporarily unavailable.");
                 setIsLoading(false);
@@ -147,7 +148,7 @@ export default function MFARegister(){
             try {
                 data = await response.json();
             } catch (e) {
-                updateAlert("severity", "3");
+                updateAlert("severity", 3);
                 updateAlert("showAlert", true);
                 updateAlert("message", "Unknown Error");
                 setIsLoading(false);
@@ -155,7 +156,7 @@ export default function MFARegister(){
             }
 
             if (!response.ok) {
-                updateAlert("severity", "3");
+                updateAlert("severity", 3);
                 updateAlert("showAlert", true);
                 updateAlert("message", data.message);
                 setIsLoading(false);
@@ -167,7 +168,7 @@ export default function MFARegister(){
             setMfaQRCode(data.mfaQRCode);
             setIsLoading(false);
         } catch (e) {
-            updateAlert("severity", "3");
+            updateAlert("severity", 3);
             updateAlert("showAlert", true);
             updateAlert("message", "Unable to connect to the authentication service.");
             setIsLoading(false);
@@ -191,7 +192,7 @@ export default function MFARegister(){
                 });
 
                 if (response.status === 502) {
-                    updateAlert("severity", "3");
+                    updateAlert("severity", 3);
                     updateAlert("showAlert", true);
                     updateAlert("message", "Authentication service is temporarily unavailable.");
                     setIsLoading(false);
@@ -203,7 +204,7 @@ export default function MFARegister(){
                 try {
                     data = await response.json();
                 } catch (e) {
-                    updateAlert("severity", "3");
+                    updateAlert("severity", 3);
                     updateAlert("showAlert", true);
                     updateAlert("message", "Unknown Error");
                     setIsLoading(false);
@@ -211,7 +212,7 @@ export default function MFARegister(){
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", "3");
+                    updateAlert("severity", 3);
                     updateAlert("showAlert", true);
                     updateAlert("message", data.message);
                     setIsLoading(false);
@@ -223,7 +224,7 @@ export default function MFARegister(){
                 setMfaQRCode(data.mfaQRCode);
                 setIsLoading(false);
             } catch (e) {
-                updateAlert("severity", "3");
+                updateAlert("severity", 3);
                 updateAlert("showAlert", true);
                 updateAlert("message", "Unable to connect to the authentication service.");
                 setIsLoading(false);

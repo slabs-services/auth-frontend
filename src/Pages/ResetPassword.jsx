@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { MdError } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdWarning } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 
 export default function ResetPassword(){
+    const location = useLocation();
+    
     const [validations, setValidations] = useState([
         {
             field: "password",

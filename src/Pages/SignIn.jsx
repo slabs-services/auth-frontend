@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { MdError } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdWarning } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 
 export default function Auth(){
+    const location = useLocation();
+
     const [validations, setValidations] = useState([
         {
             field: "email",
@@ -13,12 +16,18 @@ export default function Auth(){
         {
             field: "password",
             message: ""
+        },
+        {
+            field: "otp",
+            message: ""
         }
     ]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [loginStep, setLoginStep] = useState(1);
     const [alert, setAlert] = useState({
         showAlert: false,
         severity: 0,
@@ -43,14 +52,149 @@ export default function Auth(){
         }));
     };
 
-    function handleSubmit(e){
+    async function handleLogin(e){
         e.preventDefault();
+        setIsLoading(true);
+        
+        validations.forEach((validation) => {
+            updateValidation(validation.field, "");
+        });
 
-        // if(password.length < 8){
-        //     updateItem("password", "Incorrect Password");
-        //     setPassword('');
-        //     return;
-        // }
+        if(!email.trim().toLowerCase().includes("@") || !email.trim().toLowerCase().includes(".")){
+            updateValidation("email", "Incorrect Email");
+            setPassword('');
+            setEmail('');
+            setIsLoading(false);
+            return;
+        }
+
+        if(password.length < 8){
+            updateValidation("password", "Incorrect Password");
+            setPassword('');
+            setEmail('');
+            setIsLoading(false);
+            return;
+        }
+
+        const doLogin = new URL(
+            "/login",
+            import.meta.env.VITE_AUTH_API_URL
+        );
+
+        try {
+            const response = await fetch(doLogin, {
+                credentials: 'include',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            setPassword('');
+            setEmail('');
+            
+            try {
+                const data = await response.json();
+
+                if (!response.ok) {
+                    if(data.field === "alert"){
+                        updateAlert("severity", 3);
+                        updateAlert("showAlert", true);
+                        updateAlert("message", data.message);
+                    }else{
+                        updateValidation(data.field, data.message);
+                    }
+                    setIsLoading(false);
+                    return;
+                }
+
+                setLoginStep(2);
+                setIsLoading(false);
+            }catch(e){
+                updateAlert("severity", 3);
+                updateAlert("showAlert", true);
+                updateAlert("message", "Unknown Error");
+                setIsLoading(false);
+                return;
+            }
+        }catch(e){
+            setPassword('');
+            setEmail('');
+            updateAlert("severity", 3);
+            updateAlert("showAlert", true);
+            updateAlert("message", "Authentication service is temporarily unavailable.");
+            setIsLoading(false);
+            return;
+        }
+    }
+
+    async function handleOtpValidation(e){
+        e.preventDefault();
+        setIsLoading(true);
+        
+        validations.forEach((validation) => {
+            updateValidation(validation.field, "");
+        });
+
+        const doLoginMFA = new URL(
+            "/loginMFA",
+            import.meta.env.VITE_AUTH_API_URL
+        );
+
+        try {
+            const response = await fetch(doLoginMFA, {
+                credentials: 'include',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    mfaCode: otp
+                })
+            });
+
+            setOtp('');
+            
+            try {
+                const data = await response.json();
+
+                if (!response.ok) {
+                    if(data.field === "alert"){
+                        updateAlert("severity", 3);
+                        updateAlert("showAlert", true);
+                        updateAlert("message", data.message);
+                    }else{
+                        updateValidation(data.field, data.message);
+                    }
+                    setIsLoading(false);
+                    return;
+                }
+
+                // redirect to Destination
+                setIsLoading(false);
+            }catch(e){
+                updateAlert("severity", 3);
+                updateAlert("showAlert", true);
+                updateAlert("message", "Unknown Error");
+                setIsLoading(false);
+                return;
+            }
+        }catch(e){
+            setOtp('');
+            updateAlert("severity", 3);
+            updateAlert("showAlert", true);
+            updateAlert("message", "Authentication service is temporarily unavailable.");
+            setIsLoading(false);
+            return;
+        }
+    }
+
+    function clearFeedbackErrors(field) {
+        updateValidation(field, "");
     }
 
     useEffect(() => {
@@ -108,8 +252,7 @@ export default function Auth(){
                         return;
                     }
 
-                    updateAlert("hideContent", false);
-                    setIsLoading(false);
+                    await GetLoginStep();
                 } catch (e) {
                     updateAlert("severity", 3);
                     updateAlert("showAlert", true);
@@ -120,6 +263,52 @@ export default function Auth(){
                 updateAlert("severity", 3);
                 updateAlert("showAlert", true);
                 updateAlert("message", "Invalid OAuth Client");
+                setIsLoading(false);
+            }
+        }
+
+        async function GetLoginStep() {
+            try {
+                const loginStep = new URL(
+                    "/loginStep",
+                    import.meta.env.VITE_AUTH_API_URL
+                );
+
+                const response = await fetch(loginStep, {
+                    credentials: "include"
+                });
+
+                if (response.status === 502) {
+                    updateAlert("severity", 3);
+                    updateAlert("showAlert", true);
+                    updateAlert("message", "Authentication service is temporarily unavailable.");
+                    setIsLoading(false);
+                    return;
+                }
+
+                let data = null;
+
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    updateAlert("severity", 3);
+                    updateAlert("showAlert", true);
+                    updateAlert("message", "Unknown Error.");
+                    setIsLoading(false);
+                    return;
+                }
+
+                if(data.authStep === 3){
+                    // redirect to Destination
+                }else{
+                    updateAlert("hideContent", false);
+                    setLoginStep(data.authStep);
+                    setIsLoading(false);
+                }
+            } catch (e) {
+                updateAlert("severity", 3);
+                updateAlert("showAlert", true);
+                updateAlert("message", "Unable to connect to the authentication service.");
                 setIsLoading(false);
             }
         }
@@ -154,19 +343,31 @@ export default function Auth(){
                     }
                 </> : null }
                 { !alert.hideContent ?
-                <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
+                <>
+                { loginStep === 1 ?
+                    <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleLogin}>
+                        <div className="flex flex-col gap-y-1">
+                            <label htmlFor="email">Email address</label>
+                            <input required type="email" id="email" placeholder="example@domain.com" autoComplete="email" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={email} onChange={(e) => { clearFeedbackErrors("email"); setEmail(e.target.value); }} />
+                            { validations.find((validation) => {return validation.field === "email"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "email"}).message}</p> : null }
+                        </div>
+                        <div className="flex flex-col gap-y-1">
+                            <label htmlFor="password">Password</label>
+                            <input required type="password" id="password" autoComplete="current-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={password} onChange={(e) => { clearFeedbackErrors("password"); setPassword(e.target.value); }} />
+                            { validations.find((validation) => {return validation.field === "password"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "password"}).message}</p> : null }
+                        </div>
+                        <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Sign In</button>
+                    </form>
+                :
+                <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleOtpValidation}>
                     <div className="flex flex-col gap-y-1">
-                        <label htmlFor="email">Email address</label>
-                        <input required type="email" id="email" placeholder="example@domain.com" autoComplete="email" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={email} onChange={(e) => { setEmail(e.target.value); }} />
-                        { validations.find((validation) => {return validation.field === "email"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "email"}).message}</p> : null }
+                        <label htmlFor="otp">OTP Code</label>
+                        <input required type="text" id="otp" minLength={6} maxLength={6} placeholder="999999" autoComplete="one-time-code" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={otp} onChange={(e) => { setOtp(e.target.value); updateValidation("otp", ""); }} />
+                        { validations.find((validation) => {return validation.field === "otp"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "otp"}).message}</p> : null }
                     </div>
-                    <div className="flex flex-col gap-y-1">
-                        <label htmlFor="password">Password</label>
-                        <input required type="password" id="password" autoComplete="current-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={password} onChange={(e) => { setPassword(e.target.value); }} />
-                        { validations.find((validation) => {return validation.field === "password"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "password"}).message}</p> : null }
-                    </div>
-                    <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Sign In</button>
-                </form> : null }
+                    <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Validate</button>
+                </form> }
+                </> : null }
                 <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>
                 <p className="mt-2 text-sm">Don't have an account? <Link to="/signup" className="hover:text-blue-800 text-blue-700 font-bold">Sign up</Link></p>
             </div>

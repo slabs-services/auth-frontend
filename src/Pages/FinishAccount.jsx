@@ -35,7 +35,7 @@ export default function FinishAccount(){
                 });
 
                 if (response.status === 502) {
-                    updateAlert("severity", "3");
+                    updateAlert("severity", 3);
                     updateAlert("showAlert", true);
                     updateAlert("message", "Authentication service is temporarily unavailable.");
                     setIsLoading(false);
@@ -47,7 +47,7 @@ export default function FinishAccount(){
                 try {
                     data = await response.json();
                 } catch (e) {
-                    updateAlert("severity", "3");
+                    updateAlert("severity", 3);
                     updateAlert("showAlert", true);
                     updateAlert("message", "Unknown Error");
                     setIsLoading(false);
@@ -55,7 +55,7 @@ export default function FinishAccount(){
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", "3");
+                    updateAlert("severity", 3);
                     updateAlert("showAlert", true);
                     updateAlert("message", data.message);
                     setIsLoading(false);
@@ -66,8 +66,7 @@ export default function FinishAccount(){
                 setName(data.name);
                 setIsLoading(false);
             } catch (e) {
-                console.log(e);
-                updateAlert("severity", "3");
+                updateAlert("severity", 3);
                 updateAlert("showAlert", true);
                 updateAlert("message", "Unable to connect to the authentication service.");
                 setIsLoading(false);
