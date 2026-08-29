@@ -4,6 +4,7 @@ import { MdError } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdWarning } from "react-icons/md";
 import { useLocation } from "react-router-dom";
+import { ConfirmModal } from "../Modals/Confirm";
 
 export default function Auth(){
     const location = useLocation();
@@ -23,6 +24,7 @@ export default function Auth(){
         }
     ]);
 
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [otp, setOtp] = useState('');
@@ -34,6 +36,7 @@ export default function Auth(){
         message: "",
         hideContent: true
     });
+    const [modal, setModal] = useState(null);
 
     const updateValidation = (key, value) => {
         setValidations(prev =>
@@ -134,6 +137,7 @@ export default function Auth(){
     }
 
     async function handleOtpValidation(e){
+        const searchParams = new URLSearchParams(location.search);
         e.preventDefault();
         setIsLoading(true);
         
@@ -176,8 +180,13 @@ export default function Auth(){
                     return;
                 }
 
-                // redirect to Destination
-                setIsLoading(false);
+                updateAlert("hideContent", true);
+                const searchParams = new URLSearchParams(location.search);
+                const redirectUri = searchParams.get("redirect_uri");
+                const authorizationCode = "abc123"; // falta o authorization token
+                const redirect = new URL(redirectUri);
+                redirect.searchParams.set("code", authorizationCode);
+                window.location.href = redirect.toString();
             }catch(e){
                 updateAlert("severity", 3);
                 updateAlert("showAlert", true);
@@ -302,11 +311,26 @@ export default function Auth(){
                     return;
                 }
 
-                if(data.authStep === 3){
-                    // redirect to Destination
-                }else{
+                if (!response.ok) {
+                    updateAlert("severity", data.severity);
+                    updateAlert("showAlert", true);
+                    updateAlert("message", data.message);
+                    updateAlert("hideContent", data.hideContent);
+                    setIsLoading(false);
+                    return;
+                }
+
+                if(data.authStep === "valid-session"){
                     updateAlert("hideContent", false);
-                    setLoginStep(data.authStep);
+                    setLoginStep(3);
+                    setName(data.name);
+                    setIsLoading(false);
+                }else if(data.authStep === "mfa-step"){
+                    updateAlert("hideContent", false);
+                    setLoginStep(2);
+                    setIsLoading(false);
+                }else if(data.authStep === "not-authenticated"){
+                    updateAlert("hideContent", false);
                     setIsLoading(false);
                 }
             } catch (e) {
@@ -320,10 +344,73 @@ export default function Auth(){
         validateOAuth();
     }, []);
 
+    function getInitials(name){
+        const nameSplit = name.split(" ");
+        if(nameSplit.length === 1){
+            return nameSplit[0].substring(0,1);
+        }else{
+            return nameSplit[0].substring(0,1) + nameSplit[nameSplit.length-1].substring(0,1);
+        }
+    }
+
+    async function LogoutAccount(){
+        setModal(null);
+        setIsLoading(true);
+
+        try {
+            const logoutSession = new URL(
+                "/logout",
+                import.meta.env.VITE_AUTH_API_URL
+            );
+
+            const response = await fetch(logoutSession, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            if (response.status === 502) {
+                updateAlert("severity", 3);
+                updateAlert("showAlert", true);
+                updateAlert("message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
+
+            setLoginStep(1);
+            setIsLoading(false);
+        } catch (e) {
+            updateAlert("severity", 3);
+            updateAlert("showAlert", true);
+            updateAlert("message", "Unable to connect to the authentication service.");
+            setIsLoading(false);
+        }
+    }
+
+    function openChangeAccountModal(){
+        setModal(<ConfirmModal actionCancel={() => { setModal(null); }} actionConfirm={LogoutAccount} contentText="Are you sure you want to sign out of this account and continue signing in with a different one?" headerText="Switch account" />);
+    }
+
+    function LoginWithCurrentUser(){
+        updateAlert("hideContent", true);
+        setIsLoading(true);
+        const searchParams = new URLSearchParams(location.search);
+        const redirectUri = searchParams.get("redirect_uri");
+        const authorizationCode = "abc123"; // falta o authorization token
+        const redirect = new URL(redirectUri);
+        redirect.searchParams.set("code", authorizationCode);
+        window.location.href = redirect.toString();
+    }
+
     return (
         <div className="bg-gray-50 w-full h-full absolute flex items-center justify-center flex-col font-roboto">
             { isLoading ? <div className="w-full h-full absolute bg-black/50 flex items-center justify-center">
                 <img src="/loading.svg" title="Loading" alt="Loading" className="w-16 animate-spin" />
+            </div> : null }
+            { modal ?
+            <div className="w-full h-full absolute bg-black/50 flex items-center justify-center">
+                <div className="shadow bg-white rounded overflow-hidden">
+                    { modal }
+                </div>
             </div> : null }
             <img src="/logo-big.svg" className="w-48" />
             <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center w-116">
@@ -362,7 +449,7 @@ export default function Auth(){
                         </div>
                         <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Sign In</button>
                     </form>
-                :
+                : loginStep === 2 ?
                 <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleOtpValidation}>
                     <div className="flex flex-col gap-y-1">
                         <label htmlFor="otp">OTP Code</label>
@@ -370,10 +457,21 @@ export default function Auth(){
                         { validations.find((validation) => {return validation.field === "otp"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "otp"}).message}</p> : null }
                     </div>
                     <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Validate</button>
-                </form> }
+                </form> :
+                <>
+                    <div className="p-4 aspect-square rounded-full bg-blue-600 flex items-center justify-center mt-4">
+                        <p className="text-white font-bold text-4xl">{getInitials(name)}</p>
+                    </div>
+                    <p className="mt-4">Hi, <strong>{name.split(" ")[0]}</strong>! Would you like to continue signing in with this account? If this is the account you want to use, click continue below to proceed with the sign-in process.</p>
+                    <div className="flex w-full gap-x-2 mt-4">
+                        <button className="border-blue-600 border hover:border-blue-700 text-blue-600 hover:text-blue-700 p-2 rounded hover:cursor-pointer w-full" onClick={() => { openChangeAccountModal(); }}>Change Account</button>
+                        <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer w-full" onClick={() => { LoginWithCurrentUser(); }}>Sign In</button>
+                    </div>
+                </>
+                }
                 </> : null }
                 <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>
-                <p className="mt-2 text-sm">Don't have an account? <Link to="/signup" className="hover:text-blue-800 text-blue-700 font-bold">Sign up</Link></p>
+                { loginStep === 1 ? <p className="mt-2 text-sm">Don't have an account? <Link to="/signup" className="hover:text-blue-800 text-blue-700 font-bold">Sign up</Link></p> : null }
             </div>
         </div>
     );

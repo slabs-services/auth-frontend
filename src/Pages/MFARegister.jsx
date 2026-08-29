@@ -121,7 +121,7 @@ export default function MFARegister(){
         setTimeout(() => setClipboardSuccess(false), 2000);
     }
 
-    async function ConfirmMFASecret(){
+    async function ConfirmRegenerateMFASecret(){
         setIsLoading(true);
         setModal(null);
 
@@ -177,7 +177,7 @@ export default function MFARegister(){
     }
 
     function regenerateMFASecret(){
-        setModal(<ConfirmModal actionCancel={() => { setModal(null); }} actionConfirm={ConfirmMFASecret} contentText="Are you sure you want to generate a new MFA key? If you’ve already scanned the current key, it will no longer work, and you’ll need to set up your authenticator again." headerText="Generate MFA Secret" />);
+        setModal(<ConfirmModal actionCancel={() => { setModal(null); }} actionConfirm={ConfirmRegenerateMFASecret} contentText="Are you sure you want to generate a new MFA key? If you’ve already scanned the current key, it will no longer work, and you’ll need to set up your authenticator again." headerText="Generate MFA Secret" />);
     }
 
     useEffect(() => {
