@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { useState } from "react";
+import { GetMYAccountClient } from "../Utils";
 
 const faqsSignInTroubles = [
     {
@@ -43,7 +44,7 @@ export default function SignInTrouble(){
                         );
                     }) }
                 </div>
-                <Link to="/oauth" className="mt-4 text-sm hover:text-blue-800 text-blue-700 font-bold">Go back to sign in</Link>
+                <Link to={"/oauth?" + GetMYAccountClient()} className="mt-4 text-sm hover:text-blue-800 text-blue-700 font-bold">Go back to sign in</Link>
             </div>
         </div>
     );

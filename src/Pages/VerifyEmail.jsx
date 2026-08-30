@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AlertBox from "../Components/Alert";
-import { updateAlert } from "../Utils";
+import { GetMYAccountClient, updateAlert } from "../Utils";
 
 export default function VerifyEmail(){
     const location = useLocation();
@@ -99,7 +99,7 @@ export default function VerifyEmail(){
                         <p className="mt-6 text-sm">Hi <strong>{name}</strong>, your SpaceLabs account is almost ready. Complete your MFA setup to finish activating your account.</p>
                         <Link to="/add-mfa" className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer mt-6 w-full text-center">Create MFA</Link>
                     </> : null }
-                    <p className="mt-4 text-sm">Have an account? <Link to="/oauth" className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                    <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
                 </div>
             </div>
         </div>

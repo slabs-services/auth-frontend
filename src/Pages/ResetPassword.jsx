@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AlertBox from "../Components/Alert";
-import { updateAlert, updateValidation } from "../Utils";
+import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
 
 export default function ResetPassword(){
     const location = useLocation();
@@ -210,7 +210,7 @@ export default function ResetPassword(){
                     </div>
                     <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Change</button>
                 </form> : null }
-                <p className="mt-4 text-sm">Have an account? <Link to="/oauth" className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
             </div>
         </div>
     );

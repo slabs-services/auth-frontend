@@ -5,6 +5,7 @@ import { updateAlert } from "../Utils";
 export default function useAuth(){
     const location = useLocation();
     const [name, setName] = useState('');
+    const [applicationName, setApplicationName] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [loginStep, setLoginStep] = useState(1);
 
@@ -70,6 +71,7 @@ export default function useAuth(){
                     return;
                 }
 
+                setApplicationName(data.name);
                 await GetLoginStep();
             } catch (e) {
                 updateAlert(setAlert, "severity", 3);
@@ -156,6 +158,7 @@ export default function useAuth(){
         name,
         alert,
         setAlert,
-        setName
+        setName,
+        applicationName
     };
 }

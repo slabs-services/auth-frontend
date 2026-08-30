@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AlertBox from "../Components/Alert";
-import { updateAlert } from "../Utils";
+import { GetMYAccountClient, updateAlert } from "../Utils";
 
 export default function FinishAccount(){
+    const navigate = useNavigate();
+
     const [alert, setAlert] = useState({
         showAlert: false,
         severity: 0,
@@ -69,6 +71,51 @@ export default function FinishAccount(){
         finishActivation();
     }, []);
 
+    async function convertSession(){
+        setIsLoading(true);
+
+        const convertSessionRequest = new URL(
+            "/convertSession",
+            import.meta.env.VITE_AUTH_API_URL
+        );
+
+        try {
+            const response = await fetch(convertSessionRequest, {
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            
+            try {
+                const data = await response.json();
+
+                if (!response.ok) {
+                    updateAlert(setAlert, "severity", data.severity);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", data.message);
+                    updateAlert(setAlert, "hideContent", data.hideContent);
+                    setIsLoading(false);
+                    return;
+                }
+
+                navigate(`/auth?${GetMYAccountClient()}`);
+            }catch(e){
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
+                setIsLoading(false);
+                return;
+            }
+        }catch(e){
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+            setIsLoading(false);
+            return;
+        }
+    }
+
     return (
         <div className="bg-gray-50 w-full h-full absolute flex items-center justify-center flex-col font-roboto">
             { isLoading ? <div className="w-full h-full absolute bg-black/50 flex items-center justify-center">
@@ -82,8 +129,8 @@ export default function FinishAccount(){
                     { !alert.hideContent ? <>
                         <img src="/success.svg" title="Success" alt="Success" className="w-46 mt-6" />
                         <p className="mt-6">Congratulations, <strong>{name}</strong>! 🎉 Your account has been successfully activated, and multi-factor authentication (MFA) is now enabled. Your SpaceLabs Cloud account is fully set up and ready to use. Thank you for choosing SpaceLabs — welcome aboard!</p>
-                        <Link to="/" className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer w-full mt-4 text-center">Go to my account</Link>
-                    </> : <p className="mt-4 text-sm">Have an account? <Link to="/oauth" className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p> }
+                        <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer w-full mt-4 text-center" onClick={() => { convertSession(); }}>Go to my account</button>
+                    </> : <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p> }
                 </div>
             </div>
         </div>

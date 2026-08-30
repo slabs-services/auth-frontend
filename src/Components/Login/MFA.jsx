@@ -69,6 +69,9 @@ export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
                 const authorizationCode = data.code;
                 const redirect = new URL(redirectUri);
                 redirect.searchParams.set("code", authorizationCode);
+                if(searchParams.has("state")){
+                    redirect.searchParams.set("state", searchParams.get("state"));
+                }
                 window.location.href = redirect.toString();
             }catch(e){
                 updateAlert(setAlert, "severity", 3);
@@ -89,6 +92,7 @@ export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
 
     return (
         <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleOtpValidation}>
+            <p>Please enter the MFA code below to verify your identity and proceed with your login.</p>
             <div className="flex flex-col gap-y-1">
                 <label htmlFor="otp">OTP Code</label>
                 <input required type="text" id="otp" minLength={6} maxLength={6} placeholder="999999" autoComplete="one-time-code" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={otp} onChange={(e) => { setOtp(e.target.value); updateValidation(setValidations, "otp", ""); updateAlert(setAlert, "showAlert", false); }} />

@@ -9,7 +9,7 @@ import ResetEmailValidation from "../Components/Login/ResendActivationEmail";
 
 export default function Auth(){
     const [modal, setModal] = useState(null);
-    const { isLoading, setIsLoading, updateAlert, validateOAuth, loginStep, name, setLoginStep, alert, setAlert, setName } = useAuth();
+    const { isLoading, setIsLoading, updateAlert, validateOAuth, loginStep, name, setLoginStep, alert, setAlert, setName, applicationName } = useAuth();
 
     useEffect(() => {
         validateOAuth();
@@ -32,6 +32,7 @@ export default function Auth(){
                 <AlertBox alert={alert} />
                 { !alert.hideContent ?
                 <>
+                <p className="mt-1">{applicationName}</p>
                 { loginStep === 1 ?
                     <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} setName={setName} />
                 : loginStep === 2 ?

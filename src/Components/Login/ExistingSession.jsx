@@ -52,6 +52,9 @@ export default function ExistingSession({ setModal, updateAlert, setAlert, setIs
                 const authorizationCode = data.code;
                 const redirect = new URL(redirectUri);
                 redirect.searchParams.set("code", authorizationCode);
+                if(searchParams.has("state")){
+                    redirect.searchParams.set("state", searchParams.get("state"));
+                }
                 window.location.href = redirect.toString();
             }catch(e){
                 updateAlert(setAlert, "severity", 3);
