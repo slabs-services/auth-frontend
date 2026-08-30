@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
+import { ConfirmModal } from "../../Modals/Confirm";
 
-export default function ExistingSession({ setModal, updateAlert, setIsLoading, name }){
+export default function ExistingSession({ setModal, updateAlert, setIsLoading, name, setLoginStep }){
     const location = useLocation();
 
     function getInitials(name){

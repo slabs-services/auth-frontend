@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 
 export default function ResetPassword(){

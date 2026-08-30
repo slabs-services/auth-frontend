@@ -1,166 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaCheckCircle } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
-import { ConfirmModal } from "../Modals/Confirm";
 import LoginUser from "../Components/Login/Login";
 import MFAUser from "../Components/Login/MFA";
 import ExistingSession from "../Components/Login/ExistingSession";
 import AlertBox from "../Components/Alert";
+import useAuth from "../Hooks/Auth";
 
 export default function Auth(){
-    const location = useLocation();
-    const [name, setName] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-    const [loginStep, setLoginStep] = useState(1);
     const [modal, setModal] = useState(null);
-
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: true
-    });
-
-    const updateAlert = (key, value) => {
-        setAlert(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
+    const { isLoading, setIsLoading, updateAlert, validateOAuth, loginStep, name, setLoginStep, alert } = useAuth();
 
     useEffect(() => {
-        async function validateOAuth() {
-            const searchParams = new URLSearchParams(location.search);
-            const hasInvalidParams = !searchParams.has("client_id") || !searchParams.has("scope") || !searchParams.has("redirect_uri");
-
-            if(hasInvalidParams){
-                setIsLoading(false);
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Missing OAuth Parameters");
-                return;
-            }
-        
-            try {
-                const redirectURI = new URL(searchParams.get("redirect_uri"));
-                try {
-                    const oauthCheck = new URL(
-                        "/oauth",
-                        import.meta.env.VITE_AUTH_API_URL
-                    );
-
-                    oauthCheck.searchParams.append('client_id', searchParams.get("client_id"));
-                    oauthCheck.searchParams.append('scope', searchParams.get("scope"));
-                    oauthCheck.searchParams.append('redirect_uri', searchParams.get("redirect_uri"));
-
-                    const response = await fetch(oauthCheck);
-
-                    if (response.status === 502) {
-                        updateAlert("severity", 3);
-                        updateAlert("showAlert", true);
-                        updateAlert("message", "Authentication service is temporarily unavailable.");
-                        setIsLoading(false);
-                        return;
-                    }
-
-                    let data = null;
-
-                    try {
-                        data = await response.json();
-                    } catch (e) {
-                        updateAlert("severity", 3);
-                        updateAlert("showAlert", true);
-                        updateAlert("message", "Unknown Error.");
-                        setIsLoading(false);
-                        return;
-                    }
-
-                    if (!response.ok) {
-                        updateAlert("severity", data.severity);
-                        updateAlert("showAlert", true);
-                        updateAlert("message", data.message);
-                        updateAlert("hideContent", data.hideContent);
-                        setIsLoading(false);
-                        return;
-                    }
-
-                    await GetLoginStep();
-                } catch (e) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Unable to connect to the authentication service.");
-                    setIsLoading(false);
-                }
-            }catch(e){
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Invalid OAuth Client");
-                setIsLoading(false);
-            }
-        }
-
-        async function GetLoginStep() {
-            try {
-                const loginStep = new URL(
-                    "/loginStep",
-                    import.meta.env.VITE_AUTH_API_URL
-                );
-
-                const response = await fetch(loginStep, {
-                    credentials: "include"
-                });
-
-                if (response.status === 502) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Authentication service is temporarily unavailable.");
-                    setIsLoading(false);
-                    return;
-                }
-
-                let data = null;
-
-                try {
-                    data = await response.json();
-                } catch (e) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Unknown Error.");
-                    setIsLoading(false);
-                    return;
-                }
-
-                if (!response.ok) {
-                    updateAlert("severity", data.severity);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", data.message);
-                    updateAlert("hideContent", data.hideContent);
-                    setIsLoading(false);
-                    return;
-                }
-
-                if(data.authStep === "valid-session"){
-                    updateAlert("hideContent", false);
-                    setLoginStep(3);
-                    setName(data.name);
-                    setIsLoading(false);
-                }else if(data.authStep === "mfa-step"){
-                    updateAlert("hideContent", false);
-                    setLoginStep(2);
-                    setIsLoading(false);
-                }else if(data.authStep === "not-authenticated"){
-                    updateAlert("hideContent", false);
-                    setIsLoading(false);
-                }
-            } catch (e) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unable to connect to the authentication service.");
-                setIsLoading(false);
-            }
-        }
-
         validateOAuth();
     }, []);
 
@@ -186,7 +36,7 @@ export default function Auth(){
                 : loginStep === 2 ?
                     <MFAUser setIsLoading={setIsLoading} updateAlert={updateAlert} />
                 :
-                    <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} updateAlert={updateAlert} />
+                    <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} updateAlert={updateAlert} setLoginStep={setLoginStep} />
                 }
                 </> : null }
                 <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>
