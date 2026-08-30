@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { ConfirmModal } from "../../Modals/Confirm";
 
-export default function ExistingSession({ setModal, updateAlert, setIsLoading, name, setLoginStep }){
+export default function ExistingSession({ setModal, updateAlert, setAlert, setIsLoading, name, setLoginStep }){
     const location = useLocation();
 
     function getInitials(name){
@@ -18,7 +18,7 @@ export default function ExistingSession({ setModal, updateAlert, setIsLoading, n
     }
 
     function LoginWithCurrentUser(){
-        updateAlert("hideContent", true);
+        updateAlert(setAlert, "hideContent", true);
         setIsLoading(true);
         const searchParams = new URLSearchParams(location.search);
         const redirectUri = searchParams.get("redirect_uri");
@@ -44,9 +44,9 @@ export default function ExistingSession({ setModal, updateAlert, setIsLoading, n
             });
 
             if (response.status === 502) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Authentication service is temporarily unavailable.");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
                 setIsLoading(false);
                 return;
             }
@@ -54,9 +54,9 @@ export default function ExistingSession({ setModal, updateAlert, setIsLoading, n
             setLoginStep(1);
             setIsLoading(false);
         } catch (e) {
-            updateAlert("severity", 3);
-            updateAlert("showAlert", true);
-            updateAlert("message", "Unable to connect to the authentication service.");
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
             setIsLoading(false);
         }
     }

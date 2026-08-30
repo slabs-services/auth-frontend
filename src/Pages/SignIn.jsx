@@ -8,7 +8,7 @@ import useAuth from "../Hooks/Auth";
 
 export default function Auth(){
     const [modal, setModal] = useState(null);
-    const { isLoading, setIsLoading, updateAlert, validateOAuth, loginStep, name, setLoginStep, alert } = useAuth();
+    const { isLoading, setIsLoading, updateAlert, validateOAuth, loginStep, name, setLoginStep, alert, setAlert } = useAuth();
 
     useEffect(() => {
         validateOAuth();
@@ -32,11 +32,11 @@ export default function Auth(){
                 { !alert.hideContent ?
                 <>
                 { loginStep === 1 ?
-                    <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} />
+                    <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} />
                 : loginStep === 2 ?
-                    <MFAUser setIsLoading={setIsLoading} updateAlert={updateAlert} />
+                    <MFAUser setIsLoading={setIsLoading} updateAlert={updateAlert} setAlert={setAlert} />
                 :
-                    <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} updateAlert={updateAlert} setLoginStep={setLoginStep} />
+                    <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} updateAlert={updateAlert} setLoginStep={setLoginStep} setAlert={setAlert} />
                 }
                 </> : null }
                 <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>

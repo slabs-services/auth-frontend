@@ -6,6 +6,7 @@ import { IoReload } from "react-icons/io5";
 import { ConfirmModal } from "../Modals/Confirm";
 import { useNavigate, useLocation } from "react-router-dom";
 import AlertBox from "../Components/Alert";
+import { updateAlert, updateValidation } from "../Utils";
 
 export default function MFARegister(){
     const navigate = useNavigate();
@@ -32,30 +33,13 @@ export default function MFARegister(){
     const [regenerateSuccess, setRegenerateSuccess] = useState(false);
     const [modal, setModal] = useState(null);
 
-    const updateValidation = (key, value) => {
-        setValidations(prev =>
-            prev.map(item =>
-            item.field === key
-                ? { ...item, message: value }
-                : item
-            )
-        );
-    };
-
-    const updateAlert = (key, value) => {
-        setAlert(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
-
     async function handleSubmit(e){
         e.preventDefault();
 
         setIsLoading(true);
 
         validations.forEach((validation) => {
-            updateValidation(validation.field, "");
+            updateValidation(setValidations, validation.field, "");
         });
 
         const enableMFA = new URL(
@@ -82,12 +66,12 @@ export default function MFARegister(){
 
                 if (!response.ok) {
                     if(data.field === "alert"){
-                        updateAlert("severity", data.severity);
-                        updateAlert("showAlert", true);
-                        updateAlert("message", data.message);
-                        updateAlert("hideContent", data.hideContent);
+                        updateAlert(setAlert, "severity", data.severity);
+                        updateAlert(setAlert, "showAlert", true);
+                        updateAlert(setAlert, "message", data.message);
+                        updateAlert(setAlert, "hideContent", data.hideContent);
                     }else{
-                        updateValidation(data.field, data.message);
+                        updateValidation(setValidations, data.field, data.message);
                     }
                     setIsLoading(false);
                     setOtp('');
@@ -98,13 +82,13 @@ export default function MFARegister(){
                 navigate('/finish-activation');
             }catch(e){
                 setOtp('');
-                updateValidation("generic", "Unknown Error");
+                updateValidation(setValidations, "generic", "Unknown Error");
                 setIsLoading(false);
                 return;
             }
         }catch(e){
             setOtp('');
-            updateValidation("generic", "Authentication service is temporarily unavailable.");
+            updateValidation(setValidations, "generic", "Authentication service is temporarily unavailable.");
             setIsLoading(false);
             return;
         }
@@ -134,9 +118,9 @@ export default function MFARegister(){
             });
 
             if (response.status === 502) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Authentication service is temporarily unavailable.");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
                 setIsLoading(false);
                 return;
             }
@@ -146,18 +130,18 @@ export default function MFARegister(){
             try {
                 data = await response.json();
             } catch (e) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unknown Error");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
                 setIsLoading(false);
                 return;
             }
 
             if (!response.ok) {
-                updateAlert("severity", data.severity);
-                updateAlert("showAlert", true);
-                updateAlert("message", data.message);
-                updateAlert("hideContent", data.hideContent);
+                updateAlert(setAlert, "severity", data.severity);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", data.hideContent);
                 setIsLoading(false);
                 return;
             }
@@ -167,9 +151,9 @@ export default function MFARegister(){
             setMfaQRCode(data.mfaQRCode);
             setIsLoading(false);
         } catch (e) {
-            updateAlert("severity", 3);
-            updateAlert("showAlert", true);
-            updateAlert("message", "Unable to connect to the authentication service.");
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
             setIsLoading(false);
         }
     }
@@ -191,9 +175,9 @@ export default function MFARegister(){
                 });
 
                 if (response.status === 502) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Authentication service is temporarily unavailable.");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
                     setIsLoading(false);
                     return;
                 }
@@ -203,30 +187,30 @@ export default function MFARegister(){
                 try {
                     data = await response.json();
                 } catch (e) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Unknown Error");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Unknown Error");
                     setIsLoading(false);
                     return;
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", data.severity);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", data.message);
-                    updateAlert("hideContent", data.hideContent);
+                    updateAlert(setAlert, "severity", data.severity);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", data.message);
+                    updateAlert(setAlert, "hideContent", data.hideContent);
                     setIsLoading(false);
                     return;
                 }
 
-                updateAlert("hideContent", false);
+                updateAlert(setAlert, "hideContent", false);
                 setName(data.name);
                 setMfaQRCode(data.mfaQRCode);
                 setIsLoading(false);
             } catch (e) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unable to connect to the authentication service.");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
                 setIsLoading(false);
             }
         }
@@ -276,7 +260,7 @@ export default function MFARegister(){
                         <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
                             <div className="flex flex-col gap-y-1">
                                 <label htmlFor="otp">OTP Code</label>
-                                <input required type="text" id="otp" minLength={6} maxLength={6} placeholder="999999" autoComplete="one-time-code" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={otp} onChange={(e) => { setOtp(e.target.value); updateAlert("showAlert", false); updateValidation("otp", ""); }} />
+                                <input required type="text" id="otp" minLength={6} maxLength={6} placeholder="999999" autoComplete="one-time-code" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={otp} onChange={(e) => { setOtp(e.target.value); updateAlert(setAlert, "showAlert", false); updateValidation(setValidations, "otp", ""); }} />
                                 { validations.find((validation) => {return validation.field === "otp"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "otp"}).message}</p> : null }
                             </div>
                             <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Finish Sign Up</button>

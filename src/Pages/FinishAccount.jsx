@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import AlertBox from "../Components/Alert";
+import { updateAlert } from "../Utils";
 
 export default function FinishAccount(){
     const [alert, setAlert] = useState({
@@ -13,13 +14,6 @@ export default function FinishAccount(){
 
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState('');
-
-    const updateAlert = (key, value) => {
-        setAlert(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
 
     useEffect(() => {
         async function finishActivation() {
@@ -34,9 +28,9 @@ export default function FinishAccount(){
                 });
 
                 if (response.status === 502) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Authentication service is temporarily unavailable.");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
                     setIsLoading(false);
                     return;
                 }
@@ -46,29 +40,29 @@ export default function FinishAccount(){
                 try {
                     data = await response.json();
                 } catch (e) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Unknown Error");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Unknown Error");
                     setIsLoading(false);
                     return;
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", data.severity);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", data.message);
-                    updateAlert("hideContent", data.hideContent);
+                    updateAlert(setAlert, "severity", data.severity);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", data.message);
+                    updateAlert(setAlert, "hideContent", data.hideContent);
                     setIsLoading(false);
                     return;
                 }
 
-                updateAlert("hideContent", false);
+                updateAlert(setAlert, "hideContent", false);
                 setName(data.name);
                 setIsLoading(false);
             } catch (e) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unable to connect to the authentication service.");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
                 setIsLoading(false);
             }
         }

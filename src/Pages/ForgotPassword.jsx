@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import AlertBox from "../Components/Alert";
+import { updateAlert, updateValidation } from "../Utils";
 
 export default function ForgotPassword(){
     const [validations, setValidations] = useState([
@@ -20,28 +21,11 @@ export default function ForgotPassword(){
         hideContent: false
     });
 
-    const updateValidation = (key, value) => {
-        setValidations(prev =>
-            prev.map(item =>
-            item.field === key
-                ? { ...item, message: value }
-                : item
-            )
-        );
-    };
-
-    const updateAlert = (key, value) => {
-        setAlert(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
-
     async function handleSubmit(e){
         e.preventDefault();
         setIsLoading(true);
         validations.forEach((validation) => {
-            updateValidation(validation.field, "");
+            updateValidation(setValidations, validation.field, "");
         });
 
         const forgotPassword = new URL(
@@ -65,41 +49,41 @@ export default function ForgotPassword(){
 
                 if (!response.ok) {
                     if(data.field === "alert"){
-                        updateAlert("severity", data.severity);
-                        updateAlert("showAlert", true);
-                        updateAlert("message", data.message);
-                        updateAlert("hideContent", data.hideContent);
+                        updateAlert(setAlert, "severity", data.severity);
+                        updateAlert(setAlert, "showAlert", true);
+                        updateAlert(setAlert, "message", data.message);
+                        updateAlert(setAlert, "hideContent", data.hideContent);
                     }else{
-                        updateValidation(data.field, data.message);
+                        updateValidation(setValidations, data.field, data.message);
                     }
                     setIsLoading(false);
                     return;
                 }
 
-                updateAlert("severity", 1); 
-                updateAlert("showAlert", true);
-                updateAlert("message", data.message);
-                updateAlert("hideContent", true);
+                updateAlert(setAlert, "severity", 1); 
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", true);
                 setIsLoading(false);
             }catch(e){
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unknown Error");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
                 setIsLoading(false);
                 return;
             }
         }catch(e){
-            updateAlert("severity", 3);
-            updateAlert("showAlert", true);
-            updateAlert("message", "Authentication service is temporarily unavailable.");
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
             setIsLoading(false);
             return;
         }
     }
 
     function clearFeedbackErrors(field) {
-        updateValidation(field, "");
-        updateAlert("showAlert", false);
+        updateValidation(setValidations, field, "");
+        updateAlert(setAlert, "showAlert", false);
     }
 
     return (

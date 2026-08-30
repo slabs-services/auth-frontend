@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import AlertBox from "../Components/Alert";
+import { updateAlert, updateValidation } from "../Utils";
 
 export default function ResetPassword(){
     const location = useLocation();
@@ -29,32 +30,15 @@ export default function ResetPassword(){
         hideContent: true
     });
 
-    const updateValidation = (key, value) => {
-        setValidations(prev =>
-            prev.map(item =>
-            item.field === key
-                ? { ...item, message: value }
-                : item
-            )
-        );
-    };
-
-    const updateAlert = (key, value) => {
-        setAlert(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
-
     useEffect(() => {
         async function validatePasswordReset() {
             const searchParams = new URLSearchParams(location.search);
 
             if(!searchParams.has("recoverKey")){
                 setIsLoading(false);
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Missing Recovery Key");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Missing Recovery Key");
                 return;
             }
         
@@ -71,9 +55,9 @@ export default function ResetPassword(){
                 });
 
                 if (response.status === 502) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Authentication service is temporarily unavailable.");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
                     setIsLoading(false);
                     return;
                 }
@@ -83,29 +67,29 @@ export default function ResetPassword(){
                 try {
                     data = await response.json();
                 } catch (e) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Unknown Error");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Unknown Error");
                     setIsLoading(false);
                     return;
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", data.severity);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", data.message);
-                    updateAlert("hideContent", data.hideContent);
+                    updateAlert(setAlert, "severity", data.severity);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", data.message);
+                    updateAlert(setAlert, "hideContent", data.hideContent);
                     setIsLoading(false);
                     return;
                 }
 
                 setName(data.name);
-                updateAlert("hideContent", false);
+                updateAlert(setAlert, "hideContent", false);
                 setIsLoading(false);
             } catch (e) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unable to connect to the authentication service.");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
                 setIsLoading(false);
             }
         }
@@ -117,11 +101,11 @@ export default function ResetPassword(){
         e.preventDefault();
         setIsLoading(true);
         validations.forEach((validation) => {
-            updateValidation(validation.field, "");
+            updateValidation(setValidations, validation.field, "");
         });
 
         if(password.length < 8){
-            updateValidation("password", "Password must be 8+ characters");
+            updateValidation(setValidations, "password", "Password must be 8+ characters");
             setPassword('');
             setRepassword('');
             setIsLoading(false);
@@ -129,7 +113,7 @@ export default function ResetPassword(){
         }
 
         if(password !== repassword){
-            updateValidation("repassword", "Passwords not match");
+            updateValidation(setValidations, "repassword", "Passwords not match");
             setPassword('');
             setRepassword('');
             setIsLoading(false);
@@ -164,43 +148,43 @@ export default function ResetPassword(){
 
                 if (!response.ok) {
                     if(data.field === "alert"){
-                        updateAlert("severity", data.severity);
-                        updateAlert("showAlert", true);
-                        updateAlert("message", data.message);
-                        updateAlert("hideContent", data.hideContent);
+                        updateAlert(setAlert, "severity", data.severity);
+                        updateAlert(setAlert, "showAlert", true);
+                        updateAlert(setAlert, "message", data.message);
+                        updateAlert(setAlert, "hideContent", data.hideContent);
                     }else{
-                        updateValidation(data.field, data.message);
+                        updateValidation(setValidations, data.field, data.message);
                     }
                     setIsLoading(false);
                     return;
                 }
 
-                updateAlert("severity", 1); 
-                updateAlert("showAlert", true);
-                updateAlert("message", data.message);
-                updateAlert("hideContent", true);
+                updateAlert(setAlert, "severity", 1); 
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", true);
                 setIsLoading(false);
             }catch(e){
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unknown Error");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
                 setIsLoading(false);
                 return;
             }
         }catch(e){
             setPassword('');
             setRepassword('');
-            updateAlert("severity", 3);
-            updateAlert("showAlert", true);
-            updateAlert("message", "Authentication service is temporarily unavailable.");
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
             setIsLoading(false);
             return;
         }
     }
 
     function clearFeedbackErrors(field) {
-        updateValidation(field, "");
-        updateAlert("showAlert", false);
+        updateValidation(setValidations, field, "");
+        updateAlert(setAlert, "showAlert", false);
     }
 
     return (

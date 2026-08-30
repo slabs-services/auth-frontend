@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { updateValidation } from "../../Utils";
 
-export default function LoginUser({ setIsLoading, updateAlert, setLoginStep }){
+export default function LoginUser({ setIsLoading, updateAlert, setLoginStep, setAlert }){
     const [validations, setValidations] = useState([
         {
             field: "email",
@@ -19,11 +20,11 @@ export default function LoginUser({ setIsLoading, updateAlert, setLoginStep }){
         setIsLoading(true);
         
         validations.forEach((validation) => {
-            updateValidation(validation.field, "");
+            updateValidation(setValidations, validation.field, "");
         });
 
         if(!email.trim().toLowerCase().includes("@") || !email.trim().toLowerCase().includes(".")){
-            updateValidation("email", "Incorrect Email");
+            updateValidation(setValidations, "email", "Incorrect Email");
             setPassword('');
             setEmail('');
             setIsLoading(false);
@@ -31,7 +32,7 @@ export default function LoginUser({ setIsLoading, updateAlert, setLoginStep }){
         }
 
         if(password.length < 8){
-            updateValidation("password", "Incorrect Password");
+            updateValidation(setValidations, "password", "Incorrect Password");
             setPassword('');
             setEmail('');
             setIsLoading(false);
@@ -64,12 +65,12 @@ export default function LoginUser({ setIsLoading, updateAlert, setLoginStep }){
 
                 if (!response.ok) {
                     if(data.field === "alert"){
-                        updateAlert("severity", data.severity);
-                        updateAlert("showAlert", true);
-                        updateAlert("message", data.message);
-                        updateAlert("hideContent", data.hideContent);
+                        updateAlert(setAlert, "severity", data.severity);
+                        updateAlert(setAlert, "showAlert", true);
+                        updateAlert(setAlert, "message", data.message);
+                        updateAlert(setAlert, "hideContent", data.hideContent);
                     }else{
-                        updateValidation(data.field, data.message);
+                        updateValidation(setValidations, data.field, data.message);
                     }
                     setIsLoading(false);
                     return;
@@ -78,37 +79,27 @@ export default function LoginUser({ setIsLoading, updateAlert, setLoginStep }){
                 setLoginStep(2);
                 setIsLoading(false);
             }catch(e){
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unknown Error");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
                 setIsLoading(false);
                 return;
             }
         }catch(e){
             setPassword('');
             setEmail('');
-            updateAlert("severity", 3);
-            updateAlert("showAlert", true);
-            updateAlert("message", "Authentication service is temporarily unavailable.");
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
             setIsLoading(false);
             return;
         }
     }
 
     function clearFeedbackErrors(field) {
-        updateValidation(field, "");
-        updateAlert("showAlert", false);
+        updateValidation(setValidations, field, "");
+        updateAlert(setAlert, "showAlert", false);
     }
-    
-    const updateValidation = (key, value) => {
-        setValidations(prev =>
-            prev.map(item =>
-            item.field === key
-                ? { ...item, message: value }
-                : item
-            )
-        );
-    };
 
     return (
         <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleLogin}>

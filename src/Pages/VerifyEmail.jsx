@@ -15,22 +15,15 @@ export default function VerifyEmail(){
         hideContent: true
     });
 
-    const updateAlert = (key, value) => {
-        setAlert(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
-
     useEffect(() => {
         async function validateEmail() {
             const searchParams = new URLSearchParams(location.search);
 
             if(!searchParams.has("activationKey")){
                 setIsLoading(false);
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Missing Activation Key");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Missing Activation Key");
                 return;
             }
         
@@ -47,9 +40,9 @@ export default function VerifyEmail(){
                 });
 
                 if (response.status === 502) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Authentication service is temporarily unavailable.");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
                     setIsLoading(false);
                     return;
                 }
@@ -59,32 +52,32 @@ export default function VerifyEmail(){
                 try {
                     data = await response.json();
                 } catch (e) {
-                    updateAlert("severity", 3);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", "Unknown Error");
+                    updateAlert(setAlert, "severity", 3);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", "Unknown Error");
                     setIsLoading(false);
                     return;
                 }
 
                 if (!response.ok) {
-                    updateAlert("severity", data.severity);
-                    updateAlert("showAlert", true);
-                    updateAlert("message", data.message);
-                    updateAlert("hideContent", data.hideContent);
+                    updateAlert(setAlert, "severity", data.severity);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", data.message);
+                    updateAlert(setAlert, "hideContent", data.hideContent);
                     setIsLoading(false);
                     return;
                 }
 
-                updateAlert("severity", 1);
-                updateAlert("showAlert", true);
-                updateAlert("message", data.message);
-                updateAlert("hideContent", false);
+                updateAlert(setAlert, "severity", 1);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", false);
                 setName(data.name);
                 setIsLoading(false);
             } catch (e) {
-                updateAlert("severity", 3);
-                updateAlert("showAlert", true);
-                updateAlert("message", "Unable to connect to the authentication service.");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
                 setIsLoading(false);
             }
         }
