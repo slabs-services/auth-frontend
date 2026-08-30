@@ -134,7 +134,7 @@ export default function useAuth(){
                 updateAlert(setAlert, "hideContent", false);
                 setLoginStep(2);
                 setIsLoading(false);
-            }else if(data.authStep === "not-authenticated"){
+            }else{
                 updateAlert(setAlert, "hideContent", false);
                 setIsLoading(false);
             }
@@ -155,6 +155,7 @@ export default function useAuth(){
         loginStep,
         name,
         alert,
-        setAlert
+        setAlert,
+        setName
     };
 }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 import { updateAlert } from "../Utils";

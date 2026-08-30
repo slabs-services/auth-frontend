@@ -5,10 +5,11 @@ import MFAUser from "../Components/Login/MFA";
 import ExistingSession from "../Components/Login/ExistingSession";
 import AlertBox from "../Components/Alert";
 import useAuth from "../Hooks/Auth";
+import ResetEmailValidation from "../Components/Login/ResendActivationEmail";
 
 export default function Auth(){
     const [modal, setModal] = useState(null);
-    const { isLoading, setIsLoading, updateAlert, validateOAuth, loginStep, name, setLoginStep, alert, setAlert } = useAuth();
+    const { isLoading, setIsLoading, updateAlert, validateOAuth, loginStep, name, setLoginStep, alert, setAlert, setName } = useAuth();
 
     useEffect(() => {
         validateOAuth();
@@ -32,11 +33,13 @@ export default function Auth(){
                 { !alert.hideContent ?
                 <>
                 { loginStep === 1 ?
-                    <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} />
+                    <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} setName={setName} />
                 : loginStep === 2 ?
                     <MFAUser setIsLoading={setIsLoading} updateAlert={updateAlert} setAlert={setAlert} />
-                :
+                : loginStep === 3 ?
                     <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} updateAlert={updateAlert} setLoginStep={setLoginStep} setAlert={setAlert} />
+                :
+                    <ResetEmailValidation name={name} setAlert={setAlert} setIsLoading={setIsLoading} updateAlert={updateAlert}  />
                 }
                 </> : null }
                 <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>

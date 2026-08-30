@@ -1,4 +1,5 @@
 import { MdError, MdWarning } from "react-icons/md";
+import { FaCheckCircle } from "react-icons/fa";
 
 export default function AlertBox({ alert }){
     return (

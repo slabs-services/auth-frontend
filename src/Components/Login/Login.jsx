@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { updateValidation } from "../../Utils";
+import { useNavigate } from "react-router-dom";
 
-export default function LoginUser({ setIsLoading, updateAlert, setLoginStep, setAlert }){
+export default function LoginUser({ setIsLoading, updateAlert, setLoginStep, setAlert, setName }){
+    const navigate = useNavigate();
+
     const [validations, setValidations] = useState([
         {
             field: "email",
@@ -76,8 +79,16 @@ export default function LoginUser({ setIsLoading, updateAlert, setLoginStep, set
                     return;
                 }
 
-                setLoginStep(2);
-                setIsLoading(false);
+                if(data.needEmailValidation){
+                    setLoginStep(4);
+                    setName(data.name);
+                    setIsLoading(false);
+                }else if(data.needMFA){
+                    navigate('/add-mfa');
+                }else{
+                    setLoginStep(2);
+                    setIsLoading(false);
+                }
             }catch(e){
                 updateAlert(setAlert, "severity", 3);
                 updateAlert(setAlert, "showAlert", true);

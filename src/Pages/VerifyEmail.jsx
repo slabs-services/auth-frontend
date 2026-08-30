@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaCheckCircle } from "react-icons/fa";
 import AlertBox from "../Components/Alert";
+import { updateAlert } from "../Utils";
 
 export default function VerifyEmail(){
     const location = useLocation();
     
     const [name, setName] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-        const [alert, setAlert] = useState({
+    const [alert, setAlert] = useState({
         showAlert: false,
         severity: 0,
         message: "",
