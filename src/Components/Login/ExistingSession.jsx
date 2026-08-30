@@ -17,15 +17,56 @@ export default function ExistingSession({ setModal, updateAlert, setAlert, setIs
         setModal(<ConfirmModal actionCancel={() => { setModal(null); }} actionConfirm={LogoutAccount} contentText="Are you sure you want to sign out of this account and continue signing in with a different one?" headerText="Switch account" />);
     }
 
-    function LoginWithCurrentUser(){
-        updateAlert(setAlert, "hideContent", true);
+    async function LoginWithCurrentUser(){
         setIsLoading(true);
         const searchParams = new URLSearchParams(location.search);
-        const redirectUri = searchParams.get("redirect_uri");
-        const authorizationCode = "abc123"; // falta o authorization token
-        const redirect = new URL(redirectUri);
-        redirect.searchParams.set("code", authorizationCode);
-        window.location.href = redirect.toString();
+
+        const doLoginWithCurrentUser = new URL(
+            "/signInCurrentUser",
+            import.meta.env.VITE_AUTH_API_URL
+        );
+
+        doLoginWithCurrentUser.searchParams.append('clientId', searchParams.get("client_id"));
+        doLoginWithCurrentUser.searchParams.append('scope', searchParams.get("scope"));
+        doLoginWithCurrentUser.searchParams.append('redirectUri', searchParams.get("redirect_uri"));
+
+        try {
+            const response = await fetch(doLoginWithCurrentUser, {
+                credentials: 'include',
+            });
+            
+            try {
+                const data = await response.json();
+
+                if (!response.ok) {
+                    updateAlert(setAlert, "severity", data.severity);
+                    updateAlert(setAlert, "showAlert", true);
+                    updateAlert(setAlert, "message", data.message);
+                    updateAlert(setAlert, "hideContent", data.hideContent);
+                    setIsLoading(false);
+                    return;
+                }
+
+                const searchParams = new URLSearchParams(location.search);
+                const redirectUri = searchParams.get("redirect_uri");
+                const authorizationCode = data.code;
+                const redirect = new URL(redirectUri);
+                redirect.searchParams.set("code", authorizationCode);
+                window.location.href = redirect.toString();
+            }catch(e){
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
+                setIsLoading(false);
+                return;
+            }
+        }catch(e){
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+            setIsLoading(false);
+            return;
+        }
     }
 
     async function LogoutAccount(){

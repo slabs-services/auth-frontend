@@ -27,6 +27,11 @@ export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
         );
 
         try {
+            const searchParams = new URLSearchParams(location.search);
+            const clientId = searchParams.get("client_id");
+            const scope = searchParams.get("scope");
+            const redirectUri = searchParams.get("redirect_uri");
+
             const response = await fetch(doLoginMFA, {
                 credentials: 'include',
                 method: 'POST',
@@ -34,7 +39,10 @@ export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    mfaCode: otp
+                    mfaCode: otp,
+                    clientId,
+                    scope,
+                    redirectUri
                 })
             });
 
@@ -56,10 +64,9 @@ export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
                     return;
                 }
 
-                updateAlert(setAlert, "hideContent", true);
                 const searchParams = new URLSearchParams(location.search);
                 const redirectUri = searchParams.get("redirect_uri");
-                const authorizationCode = "abc123"; // falta o authorization token
+                const authorizationCode = data.code;
                 const redirect = new URL(redirectUri);
                 redirect.searchParams.set("code", authorizationCode);
                 window.location.href = redirect.toString();
