@@ -31,9 +31,9 @@ export default function Auth(){
                 <AlertBox alert={alert} />
                 <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center">
                     <h1 className="text-slate-900 text-3xl font-bold">Sign In</h1>
-                    { !alert.hideContent ? <p className="mt-1">{applicationName}</p> : null }
                     { !alert.hideContent ?
                     <>
+                    <p className="mt-1">{applicationName}</p>
                     { loginStep === 1 ?
                         <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} setName={setName} />
                     : loginStep === 2 ?
