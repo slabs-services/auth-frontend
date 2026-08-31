@@ -27,24 +27,26 @@ export default function Auth(){
                 </div>
             </div> : null }
             <img src="/logo-big.svg" className="w-48" />
-            <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center w-116">
-                <h1 className="text-slate-900 text-3xl font-bold">Sign In</h1>
-                { !alert.hideContent ? <p className="mt-1">{applicationName}</p> : null }
+            <div className="w-116 mt-8">
                 <AlertBox alert={alert} />
-                { !alert.hideContent ?
-                <>
-                { loginStep === 1 ?
-                    <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} setName={setName} />
-                : loginStep === 2 ?
-                    <MFAUser setIsLoading={setIsLoading} updateAlert={updateAlert} setAlert={setAlert} />
-                : loginStep === 3 ?
-                    <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} updateAlert={updateAlert} setLoginStep={setLoginStep} setAlert={setAlert} />
-                :
-                    <ResetEmailValidation name={name} setAlert={setAlert} setIsLoading={setIsLoading} updateAlert={updateAlert}  />
-                }
-                </> : null }
-                <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>
-                { loginStep === 1 ? <p className="mt-2 text-sm">Don't have an account? <Link to="/signup" className="hover:text-blue-800 text-blue-700 font-bold">Sign up</Link></p> : null }
+                <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center">
+                    <h1 className="text-slate-900 text-3xl font-bold">Sign In</h1>
+                    { !alert.hideContent ? <p className="mt-1">{applicationName}</p> : null }
+                    { !alert.hideContent ?
+                    <>
+                    { loginStep === 1 ?
+                        <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} setName={setName} />
+                    : loginStep === 2 ?
+                        <MFAUser setIsLoading={setIsLoading} updateAlert={updateAlert} setAlert={setAlert} />
+                    : loginStep === 3 ?
+                        <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} updateAlert={updateAlert} setLoginStep={setLoginStep} setAlert={setAlert} />
+                    :
+                        <ResetEmailValidation name={name} setAlert={setAlert} setIsLoading={setIsLoading} updateAlert={updateAlert}  />
+                    }
+                    </> : null }
+                    <Link to="/signin-trouble" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-4">Having trouble signing in?</Link>
+                    { loginStep === 1 ? <p className="mt-2 text-sm">Don't have an account? <Link to="/signup" className="hover:text-blue-800 text-blue-700 font-bold">Sign up</Link></p> : null }
+                </div>
             </div>
         </div>
     );

@@ -192,25 +192,27 @@ export default function ResetPassword(){
                 <img src="/loading.svg" title="Loading" alt="Loading" className="w-16 animate-spin" />
             </div> : null }
             <img src="/logo-big.svg" className="w-48" />
-            <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center w-116">
-                <h1 className="text-slate-900 text-3xl font-bold">Change Password</h1>
+            <div className="w-116 mt-8">
                 <AlertBox alert={alert} />
-                { !alert.hideContent ?
-                <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
-                    <p>Hi <strong>{name}</strong>, it's time to set a new password. Choose a strong password and confirm it below to keep your account secure.</p>
-                    <div className="flex flex-col gap-y-1">
-                        <label htmlFor="password">Password</label>
-                        <input required type="password" id="password" autoComplete="new-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={password} onChange={(e) => { clearFeedbackErrors(e.target.id); setPassword(e.target.value); }} />
-                        { validations.find((validation) => {return validation.field === "password"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "password"}).message}</p> : null }
-                    </div>
-                    <div className="flex flex-col gap-y-1">
-                        <label htmlFor="repassword">Repeat Password</label>
-                        <input required type="password" id="repassword" autoComplete="new-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={repassword} onChange={(e) => { clearFeedbackErrors(e.target.id); setRepassword(e.target.value); }} />
-                        { validations.find((validation) => {return validation.field === "repassword"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "repassword"}).message}</p> : null }
-                    </div>
-                    <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Change</button>
-                </form> : null }
-                <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center">
+                    <h1 className="text-slate-900 text-3xl font-bold">Change Password</h1>
+                    { !alert.hideContent ?
+                    <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
+                        <p>Hi <strong>{name}</strong>, it's time to set a new password. Choose a strong password and confirm it below to keep your account secure.</p>
+                        <div className="flex flex-col gap-y-1">
+                            <label htmlFor="password">Password</label>
+                            <input required type="password" id="password" autoComplete="new-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={password} onChange={(e) => { clearFeedbackErrors(e.target.id); setPassword(e.target.value); }} />
+                            { validations.find((validation) => {return validation.field === "password"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "password"}).message}</p> : null }
+                        </div>
+                        <div className="flex flex-col gap-y-1">
+                            <label htmlFor="repassword">Repeat Password</label>
+                            <input required type="password" id="repassword" autoComplete="new-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={repassword} onChange={(e) => { clearFeedbackErrors(e.target.id); setRepassword(e.target.value); }} />
+                            { validations.find((validation) => {return validation.field === "repassword"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "repassword"}).message}</p> : null }
+                        </div>
+                        <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Change</button>
+                    </form> : null }
+                    <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                </div>
             </div>
         </div>
     );

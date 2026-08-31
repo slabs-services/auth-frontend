@@ -124,18 +124,20 @@ export default function LostMFA(){
                 <img src="/loading.svg" title="Loading" alt="Loading" className="w-16 animate-spin" />
             </div> : null }
             <img src="/logo-big.svg" className="w-48" />
-            <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center w-116">
-                <h1 className="text-slate-900 text-3xl font-bold">Lost MFA</h1>
+            <div className="w-116 mt-8">
                 <AlertBox alert={alert} />
-                { !alert.hideContent ? 
-                <div className="flex flex-col mt-6 w-full gap-y-4">
-                    <div className="flex justify-center">
-                        <img src="/email.svg" title="MFA Recover" alt="MFA Recover" className="w-46" />
-                    </div>
-                    <p>Hi, <strong>{name.split(" ")[0]}</strong>. To start the reset of MFA associated with your account. If you’ve lost access to your MFA, click the button below to receive a secure recovery email and follow the steps to reset it.</p>
-                    <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" onClick={() => { sendMFARecover(); }}>Send MFA Recovery Email</button>
-                </div> : null }
-                <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center">
+                    <h1 className="text-slate-900 text-3xl font-bold">Lost MFA</h1>
+                    { !alert.hideContent ? 
+                    <div className="flex flex-col mt-6 w-full gap-y-4">
+                        <div className="flex justify-center">
+                            <img src="/email.svg" title="MFA Recover" alt="MFA Recover" className="w-46" />
+                        </div>
+                        <p>Hi, <strong>{name.split(" ")[0]}</strong>. To start the reset of MFA associated with your account. If you’ve lost access to your MFA, click the button below to receive a secure recovery email and follow the steps to reset it.</p>
+                        <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" onClick={() => { sendMFARecover(); }}>Send MFA Recovery Email</button>
+                    </div> : null }
+                    <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                </div>
             </div>
         </div>
 

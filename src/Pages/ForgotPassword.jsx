@@ -91,20 +91,22 @@ export default function ForgotPassword(){
                 <img src="/loading.svg" title="Loading" alt="Loading" className="w-16 animate-spin" />
             </div> : null }
             <img src="/logo-big.svg" className="w-48" />
-            <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center w-116">
-                <h1 className="text-slate-900 text-3xl font-bold">Forgot Password</h1>
+            <div className="w-116 mt-8">
                 <AlertBox alert={alert} />
-                { !alert.hideContent ? 
-                <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
-                    <p>Forgot your password? Don't worry! Let's get you back into your account. Start by entering your email address, and we'll guide you through the recovery process.</p>
-                    <div className="flex flex-col gap-y-1">
-                        <label htmlFor="email">Email address</label>
-                        <input required type="email" id="email" placeholder="example@domain.com" autoComplete="email" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={email} onChange={(e) => { clearFeedbackErrors(e.target.id); setEmail(e.target.value); }} />
-                        { validations.find((validation) => {return validation.field === "email"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "email"}).message}</p> : null }
-                    </div>
-                    <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Recover Password</button>
-                </form> : null }
-                <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-4 flex flex-col items-center">
+                    <h1 className="text-slate-900 text-3xl font-bold">Forgot Password</h1>
+                    { !alert.hideContent ? 
+                    <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleSubmit}>
+                        <p>Forgot your password? Don't worry! Let's get you back into your account. Start by entering your email address, and we'll guide you through the recovery process.</p>
+                        <div className="flex flex-col gap-y-1">
+                            <label htmlFor="email">Email address</label>
+                            <input required type="email" id="email" placeholder="example@domain.com" autoComplete="email" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={email} onChange={(e) => { clearFeedbackErrors(e.target.id); setEmail(e.target.value); }} />
+                            { validations.find((validation) => {return validation.field === "email"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "email"}).message}</p> : null }
+                        </div>
+                        <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Recover Password</button>
+                    </form> : null }
+                    <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>
+                </div>
             </div>
         </div>
     );
