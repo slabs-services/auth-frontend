@@ -94,7 +94,7 @@ export default function ResetPassword(){
         }
 
         validatePasswordReset();
-    }, []);
+    }, [location.search]);
 
     async function handleSubmit(e){
         e.preventDefault();

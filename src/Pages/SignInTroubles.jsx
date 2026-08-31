@@ -13,7 +13,7 @@ const faqsSignInTroubles = [
         answer: (<>Don't worry. Simply sign in with your account as usual, and we'll guide you through the steps to activate your account and get started.</>)
     },
     {
-        question: "Need to registar MFA after sign up?",
+        question: "Need to register MFA after sign up?",
         answer: (<>Don't worry. Simply sign in with your account as usual, and we'll guide you through the steps to register your MFA and get started.</>)
     },
     {

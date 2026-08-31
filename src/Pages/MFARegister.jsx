@@ -4,13 +4,12 @@ import { Link } from "react-router-dom";
 import { FaCheckCircle, FaCopy } from "react-icons/fa";
 import { IoReload } from "react-icons/io5";
 import { ConfirmModal } from "../Modals/Confirm";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
 
 export default function MFARegister(){
     const navigate = useNavigate();
-    const location = useLocation();
 
     const [validations, setValidations] = useState([
         {
@@ -48,8 +47,6 @@ export default function MFARegister(){
         );
 
         try {
-            const searchParams = new URLSearchParams(location.search);
-
             const response = await fetch(enableMFA, {
                 credentials: 'include',
                 method: 'POST',
@@ -96,8 +93,8 @@ export default function MFARegister(){
 
     async function copyMFAConfigKey(){
         const configUrl = new URL(mfaQRCode);
-        const configParams = new URLSearchParams(configUrl.searchParams);
-        await navigator.clipboard.writeText(configParams.get("secret"));
+        const secret = configUrl.searchParams.get("secret");
+        await navigator.clipboard.writeText(secret);
 
         setClipboardSuccess(true);
         setTimeout(() => setClipboardSuccess(false), 2000);

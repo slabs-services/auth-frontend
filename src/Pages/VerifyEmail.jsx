@@ -83,7 +83,7 @@ export default function VerifyEmail(){
         }
 
         validateEmail();
-    }, []);
+    }, [location.search]);
 
     return (
         <div className="bg-gray-50 w-full h-full absolute flex items-center justify-center flex-col font-roboto">

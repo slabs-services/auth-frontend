@@ -86,26 +86,16 @@ export default function FinishAccount(){
                     "Content-Type": "application/json"
                 }
             });
-            
-            try {
+
+            if (!response.ok) {
                 const data = await response.json();
-
-                if (!response.ok) {
-                    updateAlert(setAlert, "severity", data.severity);
-                    updateAlert(setAlert, "showAlert", true);
-                    updateAlert(setAlert, "message", data.message);
-                    updateAlert(setAlert, "hideContent", data.hideContent);
-                    setIsLoading(false);
-                    return;
-                }
-
-                navigate(`/auth?${GetMYAccountClient()}`);
-            }catch(e){
-                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "severity", data.severity);
                 updateAlert(setAlert, "showAlert", true);
-                updateAlert(setAlert, "message", "Unknown Error");
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", data.hideContent);
                 setIsLoading(false);
-                return;
+            }else{
+                navigate(`/oauth?${GetMYAccountClient()}`);
             }
         }catch(e){
             updateAlert(setAlert, "severity", 3);
