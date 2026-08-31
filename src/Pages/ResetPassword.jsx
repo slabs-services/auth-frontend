@@ -49,9 +49,7 @@ export default function ResetPassword(){
 
                 verifyRecoverKey.searchParams.append('recoverKey', searchParams.get("recoverKey"));
 
-                const response = await fetch(verifyRecoverKey, {
-                    credentials: "include"
-                });
+                const response = await fetch(verifyRecoverKey);
 
                 if (response.status === 502) {
                     updateAlert(setAlert, "severity", 3);

@@ -49,7 +49,6 @@ export default function ResetMFA(){
             const recoverKey = searchParams.get("recoverKey");
 
             const response = await fetch(enableMFA, {
-                credentials: 'include',
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
@@ -119,9 +118,7 @@ export default function ResetMFA(){
 
             regenateMFA.searchParams.append("recoverKey", searchParams.get("recoverKey"));
 
-            const response = await fetch(regenateMFA, {
-                credentials: "include"
-            });
+            const response = await fetch(regenateMFA);
 
             if (response.status === 502) {
                 updateAlert(setAlert, "severity", 3);
@@ -188,9 +185,7 @@ export default function ResetMFA(){
 
                 verifyMFA.searchParams.append("recoverKey", searchParams.get("recoverKey"));
 
-                const response = await fetch(verifyMFA, {
-                    credentials: "include"
-                });
+                const response = await fetch(verifyMFA);
 
                 if (response.status === 502) {
                     updateAlert(setAlert, "severity", 3);

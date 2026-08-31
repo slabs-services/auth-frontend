@@ -19,12 +19,12 @@ export default function FinishAccount(){
     useEffect(() => {
         async function finishActivation() {
             try {
-                const verifyMFA = new URL(
+                const finishAccount = new URL(
                     "/finishAccount",
                     import.meta.env.VITE_AUTH_API_URL
                 );
 
-                const response = await fetch(verifyMFA, {
+                const response = await fetch(finishAccount, {
                     credentials: "include"
                 });
 
