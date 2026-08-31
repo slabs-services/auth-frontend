@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaCheckCircle, FaCopy } from "react-icons/fa";
 import { IoReload } from "react-icons/io5";
 import { ConfirmModal } from "../Modals/Confirm";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
 
-export default function MFARegister(){
-    const navigate = useNavigate();
+export default function ResetMFA(){
+    const location = useLocation();
 
     const [validations, setValidations] = useState([
         {
@@ -33,7 +33,6 @@ export default function MFARegister(){
 
     async function handleSubmit(e){
         e.preventDefault();
-
         setIsLoading(true);
 
         validations.forEach((validation) => {
@@ -41,11 +40,14 @@ export default function MFARegister(){
         });
 
         const enableMFA = new URL(
-            "/enableMFADevice",
+            "/enableMFADeviceRecover",
             import.meta.env.VITE_AUTH_API_URL
         );
 
         try {
+            const searchParams = new URLSearchParams(location.search);
+            const recoverKey = searchParams.get("recoverKey");
+
             const response = await fetch(enableMFA, {
                 credentials: 'include',
                 method: 'POST',
@@ -53,7 +55,8 @@ export default function MFARegister(){
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    mfaCode: otp
+                    mfaCode: otp,
+                    recoverKey
                 })
             });
             
@@ -75,7 +78,11 @@ export default function MFARegister(){
                 }
 
                 setOtp('');
-                navigate('/finish-activation');
+                updateAlert(setAlert, "severity", 1); 
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", true);
+                setIsLoading(false);
             }catch(e){
                 setOtp('');
                 updateValidation(setValidations, "generic", "Unknown Error");
@@ -100,14 +107,17 @@ export default function MFARegister(){
     }
 
     async function ConfirmRegenerateMFASecret(){
+        const searchParams = new URLSearchParams(location.search);
         setIsLoading(true);
         setModal(null);
 
         try {
             const regenateMFA = new URL(
-                "/regenerateMFA",
+                "/regenerateMFARecover",
                 import.meta.env.VITE_AUTH_API_URL
             );
+
+            regenateMFA.searchParams.append("recoverKey", searchParams.get("recoverKey"));
 
             const response = await fetch(regenateMFA, {
                 credentials: "include"
@@ -155,16 +165,28 @@ export default function MFARegister(){
     }
 
     function regenerateMFASecret(){
-        setModal(<ConfirmModal actionCancel={() => { setModal(null); }} actionConfirm={ConfirmRegenerateMFASecret} contentText="Are you sure you want to generate a new MFA key? If you’ve already scanned the current key, it will no longer work, and you’ll need to set up your authenticator again." headerText="Generate MFA Secret" />);
+        setModal(<ConfirmModal actionCancel={() => { setModal(null); }} actionConfirm={ConfirmRegenerateMFASecret} contentText="Are you sure you want to generate a new MFA key? If you’ve already scanned the current key, it will no longer work, and you’ll need to scan the QRCode again." headerText="Generate MFA Secret" />);
     }
 
     useEffect(() => {
         async function mfaSettings() {
+            const searchParams = new URLSearchParams(location.search);
+
+            if(!searchParams.has("recoverKey")){
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Missing recovery key");
+                setIsLoading(false);
+                return;
+            }
+
             try {
                 const verifyMFA = new URL(
-                    "/mfaSettings",
+                    "/mfaSettingsRecover",
                     import.meta.env.VITE_AUTH_API_URL
                 );
+
+                verifyMFA.searchParams.append("recoverKey", searchParams.get("recoverKey"));
 
                 const response = await fetch(verifyMFA, {
                     credentials: "include"
@@ -229,7 +251,7 @@ export default function MFARegister(){
             <div className="w-116 mt-8">
                 <AlertBox alert={alert} />
                 <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-4 flex flex-col items-center">
-                    <h1 className="text-slate-900 text-3xl font-bold">Register MFA</h1>
+                    <h1 className="text-slate-900 text-3xl font-bold">Recover MFA</h1>
                     { !alert.hideContent ? <>
                         <p className="mt-6 text-sm">Hi <strong>{name}</strong>, at SpaceLabs Cloud, MFA (Multi-Factor Authentication) is required. Please scan the QR code below using an app such as <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" className="hover:text-blue-800 text-blue-700 font-bold">Google Authenticator</a> or <a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank" className="hover:text-blue-800 text-blue-700 font-bold">Microsoft Authenticator</a>, then enter the code generated by the app below.</p>
                         <QRCode value={mfaQRCode} level="H" className="mt-6" size={130} />
@@ -259,7 +281,7 @@ export default function MFARegister(){
                                 <input required type="text" id="otp" minLength={6} maxLength={6} placeholder="999999" autoComplete="one-time-code" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={otp} onChange={(e) => { setOtp(e.target.value); updateAlert(setAlert, "showAlert", false); updateValidation(setValidations, "otp", ""); }} />
                                 { validations.find((validation) => {return validation.field === "otp"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "otp"}).message}</p> : null }
                             </div>
-                            <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Finish Sign Up</button>
+                            <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Validate OTP</button>
                         </form>
                     </> : null }
                     <p className="mt-4 text-sm">Have an account? <Link to={"/oauth?" + GetMYAccountClient()} className="hover:text-blue-800 text-blue-700 font-bold">Sign in</Link></p>

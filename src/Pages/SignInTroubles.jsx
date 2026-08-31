@@ -18,7 +18,7 @@ const faqsSignInTroubles = [
     },
     {
         question: "Lost your MFA?",
-        answer: (<>Lost access to your MFA? You can recover access to your account using one of your available recovery options. Sign in to get started, and we'll guide you through the recovery process.</>)
+        answer: (<>Lost access to your MFA? You can recover access to your account using using your email. Sign in to get started, and we'll guide you through the recovery process.</>)
     }
 ]
 

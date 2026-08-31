@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { updateValidation } from "../../Utils";
 
 export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
@@ -97,6 +97,7 @@ export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
                 <label htmlFor="otp">OTP Code</label>
                 <input required type="text" id="otp" minLength={6} maxLength={6} placeholder="999999" autoComplete="one-time-code" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={otp} onChange={(e) => { setOtp(e.target.value); updateValidation(setValidations, "otp", ""); updateAlert(setAlert, "showAlert", false); }} />
                 { validations.find((validation) => {return validation.field === "otp"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "otp"}).message}</p> : null }
+                <Link to="/lost-mfa" className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-1">Lost MFA</Link>
             </div>
             <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Validate</button>
         </form>

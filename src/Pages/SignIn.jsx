@@ -29,10 +29,10 @@ export default function Auth(){
             <img src="/logo-big.svg" className="w-48" />
             <div className="p-8 bg-white rounded-lg border border-slate-300 shadow-xs mt-8 flex flex-col items-center w-116">
                 <h1 className="text-slate-900 text-3xl font-bold">Sign In</h1>
+                { !alert.hideContent ? <p className="mt-1">{applicationName}</p> : null }
                 <AlertBox alert={alert} />
                 { !alert.hideContent ?
                 <>
-                <p className="mt-1">{applicationName}</p>
                 { loginStep === 1 ?
                     <LoginUser setIsLoading={setIsLoading} setLoginStep={setLoginStep} updateAlert={updateAlert} setAlert={setAlert} setName={setName} />
                 : loginStep === 2 ?

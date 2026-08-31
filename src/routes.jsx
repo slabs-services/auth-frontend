@@ -7,6 +7,8 @@ import VerifyEmail from "./Pages/VerifyEmail";
 import FinishAccount from "./Pages/FinishAccount";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
+import LostMFA from "./Pages/LostMFA";
+import ResetMFA from "./Pages/ResetMFA";
 
 export default function Router(){
     return (
@@ -20,6 +22,8 @@ export default function Router(){
                 <Route path="/signin-trouble" element={<SignInTrouble />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/lost-mfa" element={<LostMFA />} />
+                <Route path="/reset-mfa" element={<ResetMFA />} />
             </Routes>
         </BrowserRouter>
     );
