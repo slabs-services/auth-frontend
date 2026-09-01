@@ -77,10 +77,7 @@ export default function LostMFA(){
 
         try {
             const response = await fetch(lostMFA, {
-                credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                credentials: 'include'
             });
 
             if (response.status === 502) {

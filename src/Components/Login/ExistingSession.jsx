@@ -1,9 +1,11 @@
 import { useLocation } from "react-router-dom";
 import { ConfirmModal } from "../../Modals/Confirm";
 import { updateAlert } from "../../Utils";
+import { useUtilsContext } from "../../Contexts/UtilsContext";
 
-export default function ExistingSession({ setModal, setAlert, setIsLoading, name, setLoginStep }){
+export default function ExistingSession({ setAlert, setIsLoading, name, setLoginStep }){
     const location = useLocation();
+    const { setModal } = useUtilsContext();
 
     function getInitials(name){
         const nameSplit = name.split(" ");

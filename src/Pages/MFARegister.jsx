@@ -9,7 +9,7 @@ import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
 import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function MFARegister(){
-    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
+    const { isLoading, setIsLoading, alert, setAlert, setModal, modal } = useUtilsContext();
     const navigate = useNavigate();
 
     const [validations, setValidations] = useState([
@@ -24,7 +24,6 @@ export default function MFARegister(){
     const [name, setName] = useState('');
     const [clipboardSuccess, setClipboardSuccess] = useState(false);
     const [regenerateSuccess, setRegenerateSuccess] = useState(false);
-    const [modal, setModal] = useState(null);
 
     async function handleSubmit(e){
         e.preventDefault();

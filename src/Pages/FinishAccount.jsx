@@ -78,10 +78,7 @@ export default function FinishAccount(){
 
         try {
             const response = await fetch(convertSessionRequest, {
-                credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                credentials: 'include'
             });
 
             if (response.status === 502) {

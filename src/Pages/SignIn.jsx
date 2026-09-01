@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import LoginUser from "../Components/Login/Login";
 import MFAUser from "../Components/Login/MFA";
@@ -9,9 +9,8 @@ import ResetEmailValidation from "../Components/Login/ResendActivationEmail";
 import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function Auth(){
-    const [modal, setModal] = useState(null);
     const { validateOAuth, loginStep, name, setLoginStep, setName, applicationName } = useAuth();
-    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
+    const { isLoading, setIsLoading, alert, setAlert, modal } = useUtilsContext();
 
     useEffect(() => {
         validateOAuth();
@@ -41,7 +40,7 @@ export default function Auth(){
                     : loginStep === 2 ?
                         <MFAUser setIsLoading={setIsLoading} setAlert={setAlert} />
                     : loginStep === 3 ?
-                        <ExistingSession name={name} setIsLoading={setIsLoading} setModal={setModal} setLoginStep={setLoginStep} setAlert={setAlert} />
+                        <ExistingSession name={name} setIsLoading={setIsLoading} setLoginStep={setLoginStep} setAlert={setAlert} />
                     :
                         <ResetEmailValidation name={name} setAlert={setAlert} setIsLoading={setIsLoading} />
                     }

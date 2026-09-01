@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function useUtils(){
     const [applicationName, setApplicationName] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [modal, setModal] = useState(null);
 
     const [alert, setAlert] = useState({
         showAlert: false,
@@ -17,6 +18,8 @@ export default function useUtils(){
         alert,
         setAlert,
         setApplicationName,
-        applicationName
+        applicationName,
+        modal,
+        setModal
     };
 }

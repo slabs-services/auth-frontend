@@ -12,10 +12,7 @@ export default function ResetEmailValidation({ setIsLoading, setAlert, name }){
 
         try {
             const response = await fetch(resendEmail, {
-                credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                credentials: 'include'
             });
 
             if (response.status === 502) {
