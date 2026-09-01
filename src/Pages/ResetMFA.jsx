@@ -272,7 +272,7 @@ export default function ResetMFA(){
                                 <IoReload className="w-4 h-4 text-gray-800" />
                                 <p className="text-gray-800 text-xs">Generate New MFA Secret</p>
                             </div> :
-                            <div className="flex items-center gap-x-1 p-1 bg-green-100 rounded mt-2 select-none">
+                            <div className="flex items-center gap-x-1 p-1 bg-green-100 rounded mt-1 select-none">
                                 <FaCheckCircle className="w-4 h-4 text-green-900" />
                                 <p className="text-green-900 text-xs">New MFA Secret Generated</p>
                             </div>
