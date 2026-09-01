@@ -11,6 +11,10 @@ export default function useAuth(){
     const { setIsLoading, setAlert } = useUtilsContext();
 
     async function validateOAuth() {
+        updateAlert(setAlert, "hideContent", true);
+        updateAlert(setAlert, "showAlert", false);
+        setIsLoading(true);
+
         const searchParams = new URLSearchParams(location.search);
         const hasInvalidParams = !searchParams.has("client_id") || !searchParams.has("scope") || !searchParams.has("redirect_uri");
 

@@ -47,6 +47,14 @@ export default function MFAUser({ setIsLoading, setAlert }){
             });
 
             setOtp('');
+
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
             
             try {
                 const data = await response.json();

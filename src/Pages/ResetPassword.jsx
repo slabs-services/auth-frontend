@@ -25,6 +25,10 @@ export default function ResetPassword(){
 
     useEffect(() => {
         async function validatePasswordReset() {
+            updateAlert(setAlert, "hideContent", true);
+            updateAlert(setAlert, "showAlert", false);
+            setIsLoading(true);
+
             const searchParams = new URLSearchParams(location.search);
 
             if(!searchParams.has("recoverKey")){
@@ -133,6 +137,14 @@ export default function ResetPassword(){
 
             setPassword('');
             setRepassword('');
+
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
             
             try {
                 const data = await response.json();

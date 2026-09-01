@@ -81,6 +81,14 @@ export default function SignUp(){
 
             setPassword('');
             setRepassword('');
+
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
             
             try {
                 const data = await response.json();
@@ -128,6 +136,7 @@ export default function SignUp(){
 
     useEffect(() => {
         updateAlert(setAlert, "hideContent", false);
+        updateAlert(setAlert, "showAlert", false);
         setIsLoading(false);
     }, []);
     

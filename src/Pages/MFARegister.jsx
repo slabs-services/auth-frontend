@@ -51,6 +51,14 @@ export default function MFARegister(){
                     mfaCode: otp
                 })
             });
+
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
             
             try {
                 const data = await response.json();
@@ -155,6 +163,10 @@ export default function MFARegister(){
 
     useEffect(() => {
         async function mfaSettings() {
+            updateAlert(setAlert, "hideContent", true);
+            updateAlert(setAlert, "showAlert", false);
+            setIsLoading(true);
+
             try {
                 const verifyMFA = new URL(
                     "/mfaSettings",

@@ -11,6 +11,10 @@ export default function FinishAccount(){
 
     useEffect(() => {
         async function finishActivation() {
+            updateAlert(setAlert, "hideContent", true);
+            updateAlert(setAlert, "showAlert", false);
+            setIsLoading(true);
+        
             try {
                 const finishAccount = new URL(
                     "/finishAccount",
@@ -79,6 +83,14 @@ export default function FinishAccount(){
                     "Content-Type": "application/json"
                 }
             });
+
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
 
             if (!response.ok) {
                 const data = await response.json();

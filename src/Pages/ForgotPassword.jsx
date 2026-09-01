@@ -9,6 +9,7 @@ export default function ForgotPassword(){
 
     useEffect(() => {
         updateAlert(setAlert, "hideContent", false);
+        updateAlert(setAlert, "showAlert", false);
         setIsLoading(false);
     }, []);
 
@@ -43,6 +44,14 @@ export default function ForgotPassword(){
                 })
             });
             
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
+
             try {
                 const data = await response.json();
 

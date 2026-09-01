@@ -11,6 +11,10 @@ export default function VerifyEmail(){
 
     useEffect(() => {
         async function validateEmail() {
+            updateAlert(setAlert, "hideContent", true);
+            updateAlert(setAlert, "showAlert", false);
+            setIsLoading(true);
+
             const searchParams = new URLSearchParams(location.search);
 
             if(!searchParams.has("activationKey")){
