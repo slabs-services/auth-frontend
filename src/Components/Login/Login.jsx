@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { updateValidation } from "../../Utils";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { updateAlert } from "../../Utils";
 
 export default function LoginUser({ setIsLoading, setLoginStep, setAlert, setName }){
@@ -122,18 +122,21 @@ export default function LoginUser({ setIsLoading, setLoginStep, setAlert, setNam
     }
 
     return (
-        <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleLogin}>
-            <div className="flex flex-col gap-y-1">
-                <label htmlFor="email">Email address</label>
-                <input required type="email" id="email" placeholder="example@domain.com" autoComplete="email" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={email} onChange={(e) => { clearFeedbackErrors("email"); setEmail(e.target.value); }} />
-                { validations.find((validation) => {return validation.field === "email"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "email"}).message}</p> : null }
-            </div>
-            <div className="flex flex-col gap-y-1">
-                <label htmlFor="password">Password</label>
-                <input required type="password" id="password" autoComplete="current-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={password} onChange={(e) => { clearFeedbackErrors("password"); setPassword(e.target.value); }} />
-                { validations.find((validation) => {return validation.field === "password"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "password"}).message}</p> : null }
-            </div>
-            <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Sign In</button>
-        </form>
+        <>
+            <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleLogin}>
+                <div className="flex flex-col gap-y-1">
+                    <label htmlFor="email">Email address</label>
+                    <input required type="email" id="email" placeholder="example@domain.com" autoComplete="email" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={email} onChange={(e) => { clearFeedbackErrors("email"); setEmail(e.target.value); }} />
+                    { validations.find((validation) => {return validation.field === "email"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "email"}).message}</p> : null }
+                </div>
+                <div className="flex flex-col gap-y-1">
+                    <label htmlFor="password">Password</label>
+                    <input required type="password" id="password" autoComplete="current-password" placeholder="••••••••" autoCorrect="off" autoCapitalize="off" className="p-1 border rounded border-slate-400 outline-none focus:border-blue-600 text-slate-900" value={password} onChange={(e) => { clearFeedbackErrors("password"); setPassword(e.target.value); }} />
+                    { validations.find((validation) => {return validation.field === "password"}).message !== "" ? <p className="text-red-600">{validations.find((validation) => {return validation.field === "password"}).message}</p> : null }
+                </div>
+                <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Sign In</button>
+            </form>
+            <Link onClick={() => {}} className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-2 w-full">Sign in with passkey</Link>
+        </>
     );
 }
