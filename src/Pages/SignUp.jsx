@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function SignUp(){
+    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
     const [validations, setValidations] = useState([
         {
             field: "name",
@@ -27,13 +29,6 @@ export default function SignUp(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: false
-    });
 
     async function handleSubmit(e){
         e.preventDefault();
@@ -131,6 +126,11 @@ export default function SignUp(){
         updateValidation(setValidations, field, "");
     }
 
+    useEffect(() => {
+        updateAlert(setAlert, "hideContent", false);
+        setIsLoading(false);
+    }, []);
+    
     return (
         <div className="bg-gray-50 w-full h-full absolute flex items-center justify-center flex-col font-roboto">
             { isLoading ? <div className="w-full h-full absolute bg-black/50 flex items-center justify-center">

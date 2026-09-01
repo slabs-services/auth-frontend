@@ -2,18 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert } from "../Utils";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function FinishAccount(){
     const navigate = useNavigate();
-
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: true
-    });
-
-    const [isLoading, setIsLoading] = useState(true);
+    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
     const [name, setName] = useState('');
 
     useEffect(() => {

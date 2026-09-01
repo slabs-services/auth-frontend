@@ -6,8 +6,10 @@ import { IoReload } from "react-icons/io5";
 import { ConfirmModal } from "../Modals/Confirm";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function ResetMFA(){
+    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
     const location = useLocation();
 
     const [validations, setValidations] = useState([
@@ -16,14 +18,7 @@ export default function ResetMFA(){
             message: ""
         }
     ]);
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: true
-    });
 
-    const [isLoading, setIsLoading] = useState(true);
     const [mfaQRCode, setMfaQRCode] = useState('');
     const [otp, setOtp] = useState('');
     const [name, setName] = useState('');

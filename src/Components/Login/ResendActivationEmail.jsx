@@ -1,7 +1,7 @@
-import { updateValidation } from "../../Utils";
+import { updateValidation, updateAlert } from "../../Utils";
 import AlertBox from "../Alert";
 
-export default function ResetEmailValidation({ setIsLoading, updateAlert, setAlert, name }){
+export default function ResetEmailValidation({ setIsLoading, setAlert, name }){
     async function resendValidationEmail(e){
         setIsLoading(true);
 

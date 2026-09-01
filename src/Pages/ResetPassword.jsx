@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function ResetPassword(){
+    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
     const location = useLocation();
     
     const [validations, setValidations] = useState([
@@ -20,14 +22,6 @@ export default function ResetPassword(){
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
     const [name, setName] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: true
-    });
 
     useEffect(() => {
         async function validatePasswordReset() {

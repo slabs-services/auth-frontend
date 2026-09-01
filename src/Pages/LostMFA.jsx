@@ -2,18 +2,12 @@ import { useEffect, useState } from "react";
 import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
 import AlertBox from "../Components/Alert";
 import { Link } from "react-router-dom";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function LostMFA(){
+    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
     const [name, setName] = useState("");
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: true
-    });
-
-    const [isLoading, setIsLoading] = useState(true);
-
+    
     useEffect(() => {
         async function getLostMFASettings(){
             try {

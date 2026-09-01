@@ -1,24 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert, updateValidation } from "../Utils";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function ForgotPassword(){
+    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
+
+    useEffect(() => {
+        updateAlert(setAlert, "hideContent", false);
+        setIsLoading(false);
+    }, []);
+
     const [validations, setValidations] = useState([
         {
             field: "email",
             message: ""
         }
     ]);
-
     const [email, setEmail] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: false
-    });
 
     async function handleSubmit(e){
         e.preventDefault();

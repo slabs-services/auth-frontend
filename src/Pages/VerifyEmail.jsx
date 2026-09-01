@@ -2,18 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AlertBox from "../Components/Alert";
 import { GetMYAccountClient, updateAlert } from "../Utils";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function VerifyEmail(){
+    const { isLoading, setIsLoading, alert, setAlert } = useUtilsContext();
     const location = useLocation();
-    
     const [name, setName] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: true
-    });
 
     useEffect(() => {
         async function validateEmail() {

@@ -10,23 +10,26 @@ import ResetPassword from "./Pages/ResetPassword";
 import LostMFA from "./Pages/LostMFA";
 import ResetMFA from "./Pages/ResetMFA";
 import { GetMYAccountClient } from "./Utils";
+import { UtilsProvider } from "./Contexts/UtilsContext";
 
 export default function Router(){
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Navigate to={"/oauth?" + GetMYAccountClient()} replace />} />
-                <Route path="/oauth" element={<Auth />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/add-mfa" element={<MFARegister />} />
-                <Route path="/verify-email" element={<VerifyEmail />} />
-                <Route path="/finish-activation" element={<FinishAccount />} />
-                <Route path="/signin-trouble" element={<SignInTrouble />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/lost-mfa" element={<LostMFA />} />
-                <Route path="/reset-mfa" element={<ResetMFA />} />
-            </Routes>
+            <UtilsProvider>
+                <Routes>
+                    <Route path="/" element={<Navigate to={"/oauth?" + GetMYAccountClient()} replace />} />
+                    <Route path="/oauth" element={<Auth />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/add-mfa" element={<MFARegister />} />
+                    <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/finish-activation" element={<FinishAccount />} />
+                    <Route path="/signin-trouble" element={<SignInTrouble />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/lost-mfa" element={<LostMFA />} />
+                    <Route path="/reset-mfa" element={<ResetMFA />} />
+                </Routes>
+            </UtilsProvider>
         </BrowserRouter>
     );
 }

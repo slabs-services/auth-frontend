@@ -1,20 +1,14 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { updateAlert } from "../Utils";
+import { useUtilsContext } from "../Contexts/UtilsContext";
 
 export default function useAuth(){
     const location = useLocation();
     const [name, setName] = useState('');
     const [applicationName, setApplicationName] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
     const [loginStep, setLoginStep] = useState(1);
-
-    const [alert, setAlert] = useState({
-        showAlert: false,
-        severity: 0,
-        message: "",
-        hideContent: true
-    });
+    const { setIsLoading, setAlert } = useUtilsContext();
 
     async function validateOAuth() {
         const searchParams = new URLSearchParams(location.search);
@@ -149,15 +143,10 @@ export default function useAuth(){
     }
 
     return {
-        updateAlert,
-        setIsLoading,
-        isLoading,
         validateOAuth,
         setLoginStep,
         loginStep,
         name,
-        alert,
-        setAlert,
         setName,
         applicationName
     };

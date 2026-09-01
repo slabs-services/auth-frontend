@@ -15,7 +15,7 @@ export const updateAlert = (setAlert, key, value) => {
     }));
 };
 
-export function GetMYAccountClient(){
+export const GetMYAccountClient = () => {
     const params = new URLSearchParams({
         client_id: import.meta.env.VITE_MY_CLIENT_ID,
         scope: import.meta.env.VITE_MY_SCOPES,

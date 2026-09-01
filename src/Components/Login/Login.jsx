@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { updateValidation } from "../../Utils";
 import { useNavigate } from "react-router-dom";
+import { updateAlert } from "../../Utils";
 
-export default function LoginUser({ setIsLoading, updateAlert, setLoginStep, setAlert, setName }){
+export default function LoginUser({ setIsLoading, setLoginStep, setAlert, setName }){
     const navigate = useNavigate();
 
     const [validations, setValidations] = useState([

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { updateValidation } from "../../Utils";
+import { updateValidation, updateAlert } from "../../Utils";
 
-export default function MFAUser({ setIsLoading, updateAlert, setAlert }){
+export default function MFAUser({ setIsLoading, setAlert }){
     const location = useLocation();
     const [otp, setOtp] = useState('');
     const [validations, setValidations] = useState([
