@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { updateValidation } from "../../Utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { updateAlert } from "../../Utils";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 export default function LoginUser({ setIsLoading, setLoginStep, setAlert, setName }){
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [validations, setValidations] = useState([
         {
@@ -121,6 +123,137 @@ export default function LoginUser({ setIsLoading, setLoginStep, setAlert, setNam
         updateAlert(setAlert, "showAlert", false);
     }
 
+    async function loginWithPasskey(){
+        setIsLoading(true);
+
+        try {
+            const loginPasskeyConfig = new URL(
+                "/loginPasskeyOptions",
+                import.meta.env.VITE_AUTH_API_URL
+            );
+
+            const response = await fetch(loginPasskeyConfig);
+
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
+
+            let data = null;
+
+            try {
+                data = await response.json();
+            } catch (e) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
+                setIsLoading(false);
+                return;
+            }
+
+            if (!response.ok) {
+                updateAlert(setAlert, "severity", data.severity);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", data.hideContent);
+                setIsLoading(false);
+                return;
+            }
+
+            try{
+                const authenticationResponse = await startAuthentication({
+                    optionsJSON: data.options
+                });
+                await validatePasskeyAuth(authenticationResponse, data.srnValidation);
+            }catch(err){
+                updateAlert(setAlert, "severity", 2);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Passkey Authentication failed");
+                updateAlert(setAlert, "hideContent", false);
+                setIsLoading(false);
+            }
+        } catch (e) {
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
+            setIsLoading(false);
+        }
+    }
+
+    async function validatePasskeyAuth(passkeyAuth, passkeySrn) {
+        try {
+            const searchParams = new URLSearchParams(location.search);
+            const clientId = searchParams.get("client_id");
+            const scope = searchParams.get("scope");
+            const redirectUri = searchParams.get("redirect_uri");
+
+            const loginPasskeyConfig = new URL(
+                "/validatePasskeyAuth",
+                import.meta.env.VITE_AUTH_API_URL
+            );
+
+            const response = await fetch(loginPasskeyConfig, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    passkeyAuth,
+                    passkeyValidationSrn: passkeySrn,
+                    clientId,
+                    scope,
+                    redirectUri
+                })
+            });
+
+            if (response.status === 502) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+                setIsLoading(false);
+                return;
+            }
+
+            let data = null;
+
+            try {
+                data = await response.json();
+            } catch (e) {
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
+                setIsLoading(false);
+                return;
+            }
+
+            if (!response.ok) {
+                updateAlert(setAlert, "severity", data.severity);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", data.message);
+                updateAlert(setAlert, "hideContent", data.hideContent);
+                setIsLoading(false);
+                return;
+            }
+
+            const authorizationCode = data.code;
+            const redirect = new URL(redirectUri);
+            redirect.searchParams.set("code", authorizationCode);
+            if(searchParams.has("state")){
+                redirect.searchParams.set("state", searchParams.get("state"));
+            }
+            window.location.href = redirect.toString();
+        } catch (e) {
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Unable to connect to the authentication service.");
+            setIsLoading(false);
+        }  
+    }
+
     return (
         <>
             <form className="flex flex-col mt-6 w-full gap-y-4" onSubmit={handleLogin}>
@@ -136,7 +269,9 @@ export default function LoginUser({ setIsLoading, setLoginStep, setAlert, setNam
                 </div>
                 <button className="bg-blue-600 hover:bg-blue-700 p-2 rounded text-white hover:cursor-pointer" type="submit">Sign In</button>
             </form>
-            <Link onClick={() => {}} className="text-blue-700 text-sm font-bold w-fit hover:text-blue-800 mt-2 w-full">Sign in with passkey</Link>
+            <div className="w-full mt-1">
+                <button onClick={() => { loginWithPasskey(); }} className="text-blue-700 text-sm font-bold hover:text-blue-800 hover:cursor-pointer">Sign in with passkey</button>
+            </div>
         </>
     );
 }
