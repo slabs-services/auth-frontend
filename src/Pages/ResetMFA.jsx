@@ -86,13 +86,19 @@ export default function ResetMFA(){
                 setIsLoading(false);
             }catch(e){
                 setOtp('');
-                updateValidation(setValidations, "generic", "Unknown Error");
+                updateAlert(setAlert, "severity", 3);
+                updateAlert(setAlert, "showAlert", true);
+                updateAlert(setAlert, "message", "Unknown Error");
+                updateAlert(setAlert, "hideContent", true);
                 setIsLoading(false);
                 return;
             }
         }catch(e){
             setOtp('');
-            updateValidation(setValidations, "generic", "Authentication service is temporarily unavailable.");
+            updateAlert(setAlert, "severity", 3);
+            updateAlert(setAlert, "showAlert", true);
+            updateAlert(setAlert, "message", "Authentication service is temporarily unavailable.");
+            updateAlert(setAlert, "hideContent", true);
             setIsLoading(false);
             return;
         }
